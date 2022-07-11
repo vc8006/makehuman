@@ -208,7 +208,7 @@ def _getCamFunc(cameraName):
     else:
         return None
 
-
+ 
 
 def loadModifierTaskViews(filename, human, category, taskviewClass=None):
     """
@@ -224,6 +224,9 @@ def loadModifierTaskViews(filename, human, category, taskviewClass=None):
     taskViews = []
     # Create task views
     for taskName, taskViewProps in data.items():
+
+        print('printing tasksName fro guimodifier.py /////////////\\\\\\\\\ ',taskName)
+
         sName = taskViewProps.get('saveName', None)
         label = taskViewProps.get('label', None)
         taskView = taskviewClass(category, taskName, label, sName)
@@ -233,11 +236,12 @@ def loadModifierTaskViews(filename, human, category, taskviewClass=None):
 
         # Create sliders
         for sliderCategory, sliderDefs in taskViewProps['modifiers'].items():
+            print("printing sliderCatory --------> ",sliderCategory)
             for sDef in sliderDefs:
                 modifierName = sDef['mod']
                 modifier = human.getModifier(modifierName)
                 label = sDef.get('label', None)
-                camFunc = _getCamFunc( sDef.get('cam', None) )
+                camFunc = _getCamFunc( sDef.get('cam', None))
                 tooltip = None
                 if len(modifier.description) > 0:
                     tooltip=modifier.description

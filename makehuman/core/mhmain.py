@@ -407,10 +407,11 @@ class MHApplication(gui3d.Application, mh.Application):
     # TO THINK: Maybe move guisave's saveMHM here as saveHumanMHM?
 
     def loadHuman(self):
+        print("loadHuman has been invoked")
         # Set a lower than default MAX_FACES value because we know the human has a good topology (will make it a little faster)
         # (we do not lower the global limit because that would limit the selection of meshes that MH would accept too much)
         self.selectedHuman = self.addObject(human.Human(files3d.loadMesh(mh.getSysDataPath("3dobjs/base.obj"), maxFaces = 5)))
-
+        print("object of human is been added to selected human variable")
         # Set the base skeleton
         base_skel = skeleton.load(mh.getSysDataPath('rigs/default.mhskel'), self.selectedHuman.meshData)
         self.selectedHuman.setBaseSkeleton(base_skel)
@@ -757,6 +758,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self.redraw()
 
     def startupSequence(self):
+        print("startupSequence is invoked now it will begin the work")
         self._processCommandlineArgs(beforeLoaded = True)
 
         mainwinGeometry = self.mainwin.storeGeometry()
@@ -826,6 +828,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self._processCommandlineArgs(beforeLoaded = False)
 
     def _processCommandlineArgs(self, beforeLoaded):
+        print("_processCommandlineArgs with beforeloaded = ",beforeLoaded)
         if beforeLoaded:
             if self.args.get('noshaders', False):
                 log.message("Force shaders disabled")
@@ -848,6 +851,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Events
     def onStart(self, event):
+        print("onStart is invoked from qtui so it will start startupSequence")
         self.startupSequence()
 
     def onStop(self, event):
@@ -1790,6 +1794,7 @@ class MHApplication(gui3d.Application, mh.Application):
             self.switchCategory(tab.name)
 
     def run(self):
+        print("here at mhmain file to run start called..........")
         self.start()
 
     def addExporter(self, exporter):

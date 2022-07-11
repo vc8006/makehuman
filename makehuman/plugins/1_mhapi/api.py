@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from .namespace import NameSpace
-
+ 
 class API(NameSpace):
 
     def __init__(self,app):

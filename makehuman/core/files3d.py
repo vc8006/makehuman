@@ -184,6 +184,7 @@ def loadMesh(path, loadColors=1, maxFaces=None, obj=None):
     maxFaces:
       *uint* Number of faces per vertex (pole), None for default (min 4)
     """
+
     name = os.path.basename(path)
     if obj is None:
         obj = module3d.Object3D(name)

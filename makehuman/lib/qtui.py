@@ -723,9 +723,11 @@ class Application(QtWidgets.QApplication, events3d.EventHandler):
         self.log_window = LogWindow()
         
     def started(self):
+        print("started function is called here which will start onStart at mhmain file")
         self.callEvent('onStart', None)
 
     def start(self):
+        print("start is called here at qtui file which will start started")
         self.OnInit()
         self.callAsync(self.started)
         self.messages.start()

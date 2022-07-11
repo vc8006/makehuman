@@ -52,7 +52,7 @@ from mesh_operations import calculateSurface, calculateVolume
 
 from makehuman import getBasemeshVersion, getShortVersion, getVersionStr, getVersion
 
-
+ 
 class Human(guicommon.Object, animation.AnimatedMesh):
 
     def __init__(self, mesh):
@@ -1354,13 +1354,22 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return self.skeleton
 
     def setBaseSkeleton(self, skel):
+        print("here at human.py setBaseSkeleton is invoked with base_skel")
+
         """Set the reference skeleton, used for poses and weighting vertices.
         Generally this skeleton is initialized once and does not change.
         """
+
+        print("callevent is called for onChanging from human.py")
         self.callEvent('onChanging', events3d.HumanEvent(self, 'skeleton'))
         animation.AnimatedMesh.setBaseSkeleton(self, skel)
+        print("in human.py skel is ",skel)
         self.updateVertexWeights(skel.getVertexWeights() if skel else None)
+
+        print("after updateVertexWeights is value changed? ",skel.getVertexWeights())
         self.callEvent('onChanged', events3d.HumanEvent(self, 'skeleton'))
+
+        print("printing after calling event onChanged at human.py")
         self.refreshPose()
 
     def updateVertexWeights(self, vertexWeights):

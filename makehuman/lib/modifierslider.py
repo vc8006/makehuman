@@ -112,6 +112,7 @@ class ModifierSlider(gui.Slider):
                                               self.update))
 
     def onChanging(self, value):
+        print("onchanging is called here at modifierslider.py with new val = ",value)
         if self.changing is not None:
             # Avoid concurrent updates
             self.changing = value
@@ -120,6 +121,7 @@ class ModifierSlider(gui.Slider):
         G.app.callAsync(self._onChanging)
 
     def _onChanging(self):
+        print("_onChanging is called here at modifierslider.py")
         value = self.changing
         self.changing = None
 

@@ -13,7 +13,7 @@ import algos3d
 import events3d
 from core import G
 from codecs import open
-
+ 
 class Modifiers(NameSpace):
     """This namespace wraps calls concerning modifiers and targets."""
 

@@ -175,6 +175,7 @@ def get_platform_paths():
 
 def redirect_standard_streams():
     import locale
+
     encoding = locale.getpreferredencoding()
     if stdout_filename:
         sys.stdout = open(stdout_filename, "w", encoding=encoding, errors="replace")
@@ -574,7 +575,7 @@ def getCredits(richtext=False):
     return( _block(text))
 
 def main():
-    print(getCopyrightMessage(short=True) + "\n")
+    # print(getCopyrightMessage(short=True) + "\n")
 
     try:
         set_sys_path()
@@ -585,7 +586,7 @@ def main():
         os.environ['MH_SHORT_VERSION'] = getShortVersion()
         os.environ['MH_MESH_VERSION'] = getBasemeshVersion()
         args = parse_arguments()
-        init_logging()
+        # init_logging()
     except Exception as e:
         print("error: " + format(str(e)), file=sys.stderr)
         import traceback
@@ -597,6 +598,7 @@ def main():
     os.environ['MH_FROZEN'] = "Yes" if isBuild() else "No"
     os.environ['MH_RELEASE'] = "Yes" if isRelease() else "No"
 
+    print("all settings imported done..................")
     debug_dump()
     from core import G
     G.args = args
@@ -609,6 +611,7 @@ def main():
 
     # Here pyQt and PyOpenGL will be imported
     from mhmain import MHApplication
+    print("makehuman file started application >>>>>>>>>>>>>>>>>>>>")
     application = MHApplication()
     application.run()
 
@@ -616,6 +619,7 @@ def main():
     #cProfile.run('application.run()')
 
     close_standard_streams()
+    print("makehuman file ended application >>>>>>>>>>>>>>>>>>>>")
 
 if __name__ == '__main__':
     main()

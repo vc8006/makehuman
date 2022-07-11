@@ -1,0 +1,202 @@
+//event register
+//callback funtions
+//obj use
+//age
+//basic information
+//values change kese ho rhi hai
+//exceptions
+
+//main py file
+makehuman.py
+    from mhversion import MHVersion
+    from mhmain import MHApplication
+
+    //all functions
+    def getVersionDigitsStr():
+    def getVersionSubStr():
+    def _versionStr():
+    def isRelease():
+    def isBuild():
+    def getVersion():
+    def getVersionStr(verbose=True, full=False):
+    def getShortVersion(noSub=False):
+    def getBasemeshVersion():
+    def getCwd():
+    def set_sys_path():
+    def get_platform_paths():
+    def redirect_standard_streams():
+    def close_standard_streams():
+    def make_user_dir():
+    def init_logging():
+    def debug_dump():
+    def parse_arguments():
+    def getCopyrightMessage(short=False):
+    def getAssetLicense(properties=None):
+    def _wordwrap(text, chars_per_line=80):
+    def getSoftwareLicense(richtext=False):
+    def getThirdPartyLicenses(richtext=False):
+    def getCredits(richtext=False):
+
+    //main
+    def main():
+
+
+    class LicenseInfo(object):
+        def properties(self):
+        def setProperty(self, name, value):
+        def __setattr__(self, name, value):
+        def isCustomized(self):
+        def __str__(self):
+        def asDict(self):
+        def fromDict(self, propDict):
+        def fromJson(self, json_data):
+        def copy(self):
+        def updateFromComment(self, commentLine):
+        def toNumpyString(self):
+        def fromNumpyString(self, text, index=None):
+
+//main application lies here
+mhmain.py
+    from progress import Progress
+    from mhversion import MHVersion
+    from scene import Scene
+    from getpath import findFile
+    from getpath import pathToUnicode
+    from glmodule import setSceneLighting
+    from guisave import saveMHM
+    import human
+    import skeleton
+    import guifiles
+    import gui
+    import language
+    import log
+
+    //all functions
+    def outFile(path):
+    def inFile(path):
+
+
+    class PluginCheckBox(gui.CheckBox):
+    class PluginsTaskView(gui3d.TaskView):
+    class SymmetryAction(gui3d.Action):
+    class MHApplication(gui3d.Application, mh.Application):
+
+// main file for all change functions of human
+human.py
+    from progress import Progress
+    from getpath import getSysDataPath, canonicalPath
+    from mesh_operations import calculateSurface, calculateVolume
+    from makehuman import getBasemeshVersion, getShortVersion, getVersionStr, getVersion
+    import algos3d
+    import guicommon
+    import events3d
+    import log
+    import material
+    import animation
+    import warpmodifier
+    import skeleton
+    import compat
+
+
+    class Human(guicommon.Object, animation.AnimatedMesh):
+        def getName(self):
+        def setName(self, name=''):
+        def getTags(self):
+        def setTags(self, tags):
+        def addTag(self, tag=''):
+        def clearTags(self):
+        def getUuid(self):
+        def setUuid(self, _uuid=''):
+        def newUuid(self):
+        def setProxy(self, proxy):
+        def setHairProxy(self, proxy):
+        def getHairProxy(self):
+        def setEyesProxy(self, proxy):
+        def getEyesProxy(self):
+        def setEyebrowsProxy(self, proxy):
+        def getEyebrowsProxy(self):
+        def setEyelashesProxy(self, proxy):
+        def getEyelashesProxy(self):
+        def setTeethProxy(self, proxy):
+        def getTeethProxy(self):
+        def setTongueProxy(self, proxy):
+        def getTongueProxy(self):
+        def clothesProxies(self):
+        def addClothesProxy(self, proxy):
+        def removeClothesProxy(self, uuid):
+        def _swapProxies(self, oldPxy, newPxy):
+        def maskFaces(self):
+        def hasGenitals(self):
+        def traceStack(self, all=True):
+        def traceBuffer(self, all=True, vertsToList=0):
+        def getProxies(self, includeHumanProxy = True):
+        def getTypedSimpleProxies(self, ptype):
+        def getProxyObjects(self):
+        def getObjects(self, excludeZeroFaceObjs=False):
+        def show(self):
+        def hide(self):
+        def setPosition(self, position):
+        def setRotation(self, rotation):
+        def setSolid(self, *args, **kwargs):
+        def setSubdivided(self, flag, *args, **kwargs):
+        def setGender(self, gender, updateModifier = True):
+        def getGender(self):
+        def getDominantGender(self):
+        def _setGenderVals(self):
+        def setAge(self, age, updateModifier = True):
+        def getAge(self):
+        def getAgeYears(self):
+        def setAgeYears(self, ageYears, updateModifier=True):
+        def _setAgeVals(self):
+        def setWeight(self, weight, updateModifier = True):
+        def getWeight(self):
+        def getBsa(self):
+        def getVolume(self):
+        def getWeightKg(self):
+        def _setWeightVals(self):
+        def setMuscle(self, muscle, updateModifier = True):
+        def getMuscle(self):
+        def _setMuscleVals(self):
+        def setHeight(self, height, updateModifier = True):
+        def getHeight(self):
+        def getHeightCm(self):
+        def getBoundingBox(self):
+        def _setHeightVals(self):
+        def setBreastSize(self, size, updateModifier = True):
+        def getBreastSize(self):
+        def _setBreastSizeVals(self):
+        def setBreastFirmness(self, firmness, updateModifier = True):
+        def getBreastFirmness(self):
+        def _setBreastFirmnessVals(self):
+        def setBodyProportions(self, proportion, updateModifier = True):
+        def _setBodyProportionVals(self):
+        def getBodyProportions(self):
+        def setCaucasian(self, caucasian, sync=True, updateModifier = True):
+        def getCaucasian(self):
+        def setAfrican(self, african, sync=True, updateModifier = True):
+        def getAfrican(self):
+        def setAsian(self, asian, sync=True, updateModifier = True):
+        def getAsian(self):
+        def _setEthnicVals(self, exclude=None):
+        def setDefaultValues(self):
+        def resetMeshValues(self):
+        def _resetProxies(self):
+        def getMaterial(self):
+        def setMaterial(self, mat):
+        def setSkeleton(self, skel):
+        def getSkeleton(self):
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
