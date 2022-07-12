@@ -3,36 +3,24 @@
 
 """
 **Project Name:**      MakeHuman
-
 **Product Home Page:** http://www.makehumancommunity.org/
-
 **Github Code Home Page:**    https://github.com/makehumancommunity/
-
 **Authors:**           Marc Flerackers
-
 **Copyright(c):**      MakeHuman Team 2001-2020
-
 **Licensing:**         AGPL3
-
     This file is part of MakeHuman Community (www.makehumancommunity.org).
-
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
     published by the Free Software Foundation, either version 3 of the
     License, or (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
-
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
 Abstract
 --------
-
 This module contains classes to allow an object to handle events.
 """
 import profiler
@@ -53,7 +41,6 @@ class Event:
 class MouseEvent(Event):
     """
     Contains information about a mouse event.
-
     :param button: the button that is pressed in case of a mousedown or mouseup event, or button flags in case of a mousemove event.
     :type button: int
     :param x: the x position of the mouse in window coordinates.
@@ -79,7 +66,6 @@ class MouseEvent(Event):
 class MouseWheelEvent(Event):
     """
     Contains information about a mouse wheel event.
-
     :param wheelDelta: the amount and direction that the wheel was scrolled.
     :type wheelDelta: int
     """
@@ -95,7 +81,6 @@ class MouseWheelEvent(Event):
 class KeyEvent(Event):
     """
     Contains information about a keyboard event.
-
     :param key: the key code of the key that was pressed or released.
     :type key: int
     :param character: the unicode character if the key represents a character.
@@ -115,7 +100,6 @@ class KeyEvent(Event):
 class FocusEvent(Event):
     """
     Contains information about a view focus/blur event
-
     :param blurred: the view that lost the focus.
     :type blurred: guid3d.View
     :param focused: the view that gained the focus.
@@ -132,7 +116,6 @@ class FocusEvent(Event):
 class ResizeEvent(Event):
     """
     Contains information about a resize event
-
     :param width: the new width of the window in pixels.
     :type width: int
     :param height: the new height of the window in pixels.
@@ -167,34 +150,24 @@ class EventHandler(object):
     Currently only one event per event name can be attached. This is because we either allow a class method or
     a custom method to be attached as event handling method. Since the custom method replaces the class method,
     it is needed in some case to call the base class's method from the event handling method.
-
     There are 2 ways to attach handlers:
-
     1. Override the method. This is the most appropriate way when you want to add distinctive behaviour to many EventHandlers.
-
     ::
-
         class Widget(View):
-
             def onMouseDown(self, event):
                 #Handle event
-
     2. Use the event decorator. This is the most appropriate way when you want to attach distinctive behaviour to one EventHandler.
-
     ::
-
         widget = Widget()
-
         @widget.mhEvent:
         def onMouseDown(event):
             #Handle event
-
     Note that self is not passed to the handler in this case, which should not be a problem as you can just use the variable since you are creating a closure.
     """
     def __init__(self):
         self.sortOrder = None
 
-    _logger = log.getLogger('mh.callEvent')
+    # _logger = log.getLogger('mh.callEvent')
     _depth = 0
 
     def callEvent(self, eventType, event):
@@ -203,18 +176,18 @@ class EventHandler(object):
         topLevel = EventHandler._depth == 0
         EventHandler._depth += 1
         try:
-            self._logger.debug('callEvent[%d]: %s.%s(%s)', self._depth, self, eventType, event)
+            # self._logger.debug('callEvent[%d]: %s.%s(%s)', self._depth, self, eventType, event)
             method = getattr(self, eventType)
             if topLevel and profiler.active():
                 profiler.accum('method(event)', globals(), locals())
             else:
                 method(event)
         except Exception as _:
-            log.warning('Exception during event %s', eventType, exc_info=True)
+            # log.warning('Exception during event %s', eventType, exc_info=True)
             self.eventFailed(EventHandler._depth)
         EventHandler._depth -= 1
         if topLevel:
-            self._logger.debug('callEvent: done')
+            # self._logger.debug('callEvent: done')
             if G.app:
                 G.app.redraw()
             return True

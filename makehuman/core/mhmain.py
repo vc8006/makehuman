@@ -59,10 +59,20 @@ import contextlib
 
 from mhversion import MHVersion
 
+
+
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
+
 @contextlib.contextmanager
 def outFile(path):
+    debug("log")
     path = mh.getPath(path)
     tmppath = path + '.tmp'
+    import log
     try:
         with open(tmppath, 'w', encoding="utf-8") as f:
             yield f
@@ -76,6 +86,8 @@ def outFile(path):
 
 @contextlib.contextmanager
 def inFile(path):
+    debug("log")
+    import log
     try:
         path = mh.getPath(path)
         if not os.path.isfile(path):
@@ -89,11 +101,13 @@ def inFile(path):
 class PluginCheckBox(gui.CheckBox):
 
     def __init__(self, module):
+        debug("log")
 
         super(PluginCheckBox, self).__init__(module, module not in gui3d.app.getSetting('excludePlugins'))
         self.module = module
 
     def onClicked(self, event):
+        debug("log")
         if self.selected:
             excludes = gui3d.app.getSetting('excludePlugins')
             excludes.remove(self.module)
@@ -108,6 +122,7 @@ class PluginCheckBox(gui.CheckBox):
 class PluginsTaskView(gui3d.TaskView):
 
     def __init__(self, category):
+        debug("log")
         gui3d.TaskView.__init__(self, category, 'Plugins')
 
         self.scroll = self.addTopWidget(gui.VScrollArea())
@@ -123,12 +138,14 @@ class PluginsTaskView(gui3d.TaskView):
 
 class SymmetryAction(gui3d.Action):
     def __init__(self, human, direction):
+        debug("log")
         super(SymmetryAction, self).__init__('Apply symmetry %s' % ("left" if direction == 'l' else "right"))
         self.human = human
         self.direction = direction
         self.before = [(m.fullName, m.getValue()) for m in human.modifiers]
 
     def do(self):
+        debug("log")
         if self.direction == 'r':
             self.human.applySymmetryRight()
         else:
@@ -138,6 +155,7 @@ class SymmetryAction(gui3d.Action):
         return True
 
     def undo(self):
+        debug("log")
         for (modifierName, value) in self.before:
             self.human.getModifier(modifierName).setValue(value)
         self.human.applyAllTargets()
@@ -147,6 +165,7 @@ class SymmetryAction(gui3d.Action):
 
 class MHApplication(gui3d.Application, mh.Application):
     def __init__(self):
+        debug("log")
         if G.app is not None:
             raise RuntimeError('MHApplication is a singleton')
         G.app = self
@@ -312,6 +331,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
         @self.currentFile.mhEvent
         def onModified(event):
+            debug("log")
             self.updateFilenameCaption()
 
         #self.modelCamera = mh.Camera()
@@ -337,11 +357,14 @@ class MHApplication(gui3d.Application, mh.Application):
 
     @property
     def settings(self):
+        debug("log")
         """READ-ONLY dict of the settings of this application. Changing this
         dict has NO impact."""
         return dict(self._settings)
 
     def addSetting(self, setting_name, default_value, value=None):
+        debug("log")
+        import log
         """Declare a new setting for this application. Only has an impact the
         first time it's called for a unique setting_name. It's impossible to
         re-declare defaults for settings.
@@ -356,6 +379,7 @@ class MHApplication(gui3d.Application, mh.Application):
         if value is None:
             if setting_name in self._undeclared_settings:
                 # Deferred set of setting value
+                import log
                 log.debug("Assigning setting %s value %s that was loaded before the setting was declared." % (setting_name, self._undeclared_settings[setting_name]))
                 self._settings[setting_name] = self._undeclared_settings[setting_name]
                 del self._undeclared_settings[setting_name]
@@ -365,6 +389,7 @@ class MHApplication(gui3d.Application, mh.Application):
             self._settings[setting_name] = value
 
     def getSetting(self, setting_name):
+        debug("log")
         """Retrieve the value of a setting.
         """
         if setting_name not in self._default_settings:
@@ -372,10 +397,12 @@ class MHApplication(gui3d.Application, mh.Application):
         return self._settings.get(setting_name, self.getSettingDefault(setting_name))
 
     def getSettingDefault(self, setting_name):
+        debug("log")
         """Retrieve the default value declared for a setting."""
         return self._default_settings[setting_name]
 
     def setSetting(self, setting_name, value):
+        # debug("log")
         """Change the value of a setting. If value == None, the default value
         for that setting is restored."""
         if setting_name not in self._default_settings:
@@ -386,6 +413,7 @@ class MHApplication(gui3d.Application, mh.Application):
             self._settings[setting_name] = value
 
     def resetSettings(self):
+        debug("log")
         """Restore all settings to their defaults
         """
         self._settings = dict(self._default_settings)
@@ -399,6 +427,7 @@ class MHApplication(gui3d.Application, mh.Application):
         return G.args
 
     def loadHumanMHM(self, filename):
+        debug("log")
         self.selectedHuman.load(filename, True)
         self.clearUndoRedo()
         # Reset mesh is never forced to wireframe
@@ -407,6 +436,7 @@ class MHApplication(gui3d.Application, mh.Application):
     # TO THINK: Maybe move guisave's saveMHM here as saveHumanMHM?
 
     def loadHuman(self):
+        debug("log")
         print("loadHuman has been invoked")
         # Set a lower than default MAX_FACES value because we know the human has a good topology (will make it a little faster)
         # (we do not lower the global limit because that would limit the selection of meshes that MH would accept too much)
@@ -417,6 +447,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self.selectedHuman.setBaseSkeleton(base_skel)
 
     def loadScene(self):
+        debug("log")
         userSceneDir = mh.getDataPath("scenes")
         if not os.path.exists(userSceneDir):
             os.makedirs(userSceneDir)
@@ -426,62 +457,73 @@ class MHApplication(gui3d.Application, mh.Application):
         self.setScene( Scene(findFile("scenes/default.mhscene")) )
 
     def loadMainGui(self):
+        debug("log")
         @self.selectedHuman.mhEvent
         def onMouseDown(event):
-          if self.tool:
-            self.selectedGroup = self.getSelectedFaceGroup()
-            self.tool.callEvent("onMouseDown", event)
-          else:
-            self.currentTask.callEvent("onMouseDown", event)
+            debug("log")
+            if self.tool:
+                self.selectedGroup = self.getSelectedFaceGroup()
+                self.tool.callEvent("onMouseDown", event)
+            else:
+                self.currentTask.callEvent("onMouseDown", event)
 
         @self.selectedHuman.mhEvent
         def onMouseMoved(event):
-          if self.tool:
-            self.tool.callEvent("onMouseMoved", event)
-          else:
-            self.currentTask.callEvent("onMouseMoved", event)
+            debug("log")
+            if self.tool:
+                self.tool.callEvent("onMouseMoved", event)
+            else:
+                self.currentTask.callEvent("onMouseMoved", event)
 
         @self.selectedHuman.mhEvent
         def onMouseDragged(event):
-          if self.tool:
-            self.tool.callEvent("onMouseDragged", event)
-          else:
-            self.currentTask.callEvent("onMouseDragged", event)
+            debug("log")
+            if self.tool:
+                self.tool.callEvent("onMouseDragged", event)
+            else:
+                self.currentTask.callEvent("onMouseDragged", event)
 
         @self.selectedHuman.mhEvent
         def onMouseUp(event):
-          if self.tool:
-            self.tool.callEvent("onMouseUp", event)
-          else:
-            self.currentTask.callEvent("onMouseUp", event)
+            debug("log")
+            if self.tool:
+                self.tool.callEvent("onMouseUp", event)
+            else:
+                self.currentTask.callEvent("onMouseUp", event)
 
         @self.selectedHuman.mhEvent
         def onMouseEntered(event):
-          if self.tool:
-            self.tool.callEvent("onMouseEntered", event)
-          else:
-            self.currentTask.callEvent("onMouseEntered", event)
+            debug("log")
+            if self.tool:
+                self.tool.callEvent("onMouseEntered", event)
+            else:
+                self.currentTask.callEvent("onMouseEntered", event)
 
         @self.selectedHuman.mhEvent
         def onMouseExited(event):
-          if self.tool:
-            self.tool.callEvent("onMouseExited", event)
-          else:
-            self.currentTask.callEvent("onMouseExited", event)
+            debug("log")
+            if self.tool:
+                self.tool.callEvent("onMouseExited", event)
+            else:
+                self.currentTask.callEvent("onMouseExited", event)
 
         @self.selectedHuman.mhEvent
         def onMouseWheel(event):
-          if self.tool:
-            self.tool.callEvent("onMouseWheel", event)
-          else:
-            self.currentTask.callEvent("onMouseWheel", event)
+            debug("log")
+            if self.tool:
+                self.tool.callEvent("onMouseWheel", event)
+            else:
+                self.currentTask.callEvent("onMouseWheel", event)
 
         @self.selectedHuman.mhEvent
         def onChanging(event):
+            debug("log")
             self.callEventHandlers('onHumanChanging', event)
 
         @self.selectedHuman.mhEvent
         def onChanged(event):
+            debug("log")
+            print("here at mhmain.py onChanged function")
             self.actions.pose.setEnabled(self.selectedHuman.isPoseable())
 
             if event.change == 'smooth':
@@ -499,22 +541,27 @@ class MHApplication(gui3d.Application, mh.Application):
 
         @self.selectedHuman.mhEvent
         def onTranslated(event):
+            debug("log")
             self.callEventHandlers('onHumanTranslated', event)
 
         @self.selectedHuman.mhEvent
         def onRotated(event):
+            debug("log")
             self.callEventHandlers('onHumanRotated', event)
 
         @self.selectedHuman.mhEvent
         def onShown(event):
+            debug("log")
             self.callEventHandlers('onHumanShown', event)
 
         @self.selectedHuman.mhEvent
         def onHidden(event):
+            debug("log")
             self.callEventHandlers('onHumanHidden', event)
 
         @self.modelCamera.mhEvent
         def onRotated(event):
+            debug("log")
             self.callEventHandlers('onCameraRotated', event)
 
         # Set up categories and tasks
@@ -527,6 +574,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
     def loadPlugins(self):
 
+        debug("log")
         pluginsToLoad = []
 
         sys_path = os.path.abspath(mh.getSysPath('plugins'))
@@ -562,10 +610,12 @@ class MHApplication(gui3d.Application, mh.Application):
             self.loadPlugin(name=name, location=location)
 
     def loadPlugin(self, name, location):
+        debug("log")
 
         if not name in self.getSetting('excludePlugins'):
 
             try:
+                import log
                 log.message('Importing plugin %s', name)
                 spec = importlib.util.spec_from_file_location(name=name, location=location)
                 if not spec:
@@ -588,6 +638,7 @@ class MHApplication(gui3d.Application, mh.Application):
                     return True
 
             except:
+                import log
                 log.warning('Could not load %s', name, exc_info=True)
                 return False
 
@@ -596,7 +647,8 @@ class MHApplication(gui3d.Application, mh.Application):
             return False
 
     def unloadPlugins(self):
-
+        debug("log")
+        import log
         for name, module in self.modules.items():
             if module is None:
                 continue
@@ -608,18 +660,21 @@ class MHApplication(gui3d.Application, mh.Application):
                 log.warning('Could not unload %s', name, exc_info=True)
 
     def getLoadedPlugins(self):
+        debug("log")
         """
         Get the names of loaded plugins.
         """
         return list(self.modules.keys())
 
     def getPlugin(self, name):
+        debug("log")
         """
         Get the (python) module of the plugin with specified name.
         """
         return self.modules[name]
 
     def loadGui(self):
+        debug("log")
 
         progress = Progress(5)
 
@@ -644,6 +699,7 @@ class MHApplication(gui3d.Application, mh.Application):
         # self.progressBar.hide()
 
     def loadGrid(self):
+        debug("log")
         if self.backplaneGrid:
             self.removeObject(self.backplaneGrid)
 
@@ -693,6 +749,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self.actions.grid.setChecked(True)
 
     def loadBackgroundGradient(self):
+        debug("log")
         import numpy as np
 
         if self.backgroundGradient:
@@ -714,10 +771,12 @@ class MHApplication(gui3d.Application, mh.Application):
         self._updateBackgroundDimensions()
 
     def onResizedCallback(self, event):
+        debug("log")
         gui3d.Application.onResizedCallback(self, event)
         self._updateBackgroundDimensions()
 
     def _updateBackgroundDimensions(self, width=G.windowWidth, height=G.windowHeight):
+        debug("log")
         if self.backgroundGradient is None:
             return
 
@@ -735,6 +794,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self.backgroundGradient.setPosition([0, 0, -0.85*cam.farPlane])
 
     def loadMacroTargets(self):
+        debug("log")
         """
         Preload all target files belonging to group macrodetails and its child
         groups.
@@ -746,6 +806,7 @@ class MHApplication(gui3d.Application, mh.Application):
             algos3d.getTarget(self.selectedHuman.meshData, target.path)
 
     def loadFinish(self):
+        debug("log")
         self.selectedHuman.updateMacroModifiers()
         self.selectedHuman.applyAllTargets()
 
@@ -758,6 +819,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self.redraw()
 
     def startupSequence(self):
+        debug("log")
         print("startupSequence is invoked now it will begin the work")
         self._processCommandlineArgs(beforeLoaded = True)
 
@@ -803,7 +865,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
         progress.step('Loading done')
 
-        log.message('') # Empty status indicator
+        # log.message('') # Empty status indicator
 
         if sys.platform.startswith("darwin"):
             self.splash.resize(0,0) # work-around for mac splash-screen closing bug
@@ -828,6 +890,8 @@ class MHApplication(gui3d.Application, mh.Application):
         self._processCommandlineArgs(beforeLoaded = False)
 
     def _processCommandlineArgs(self, beforeLoaded):
+        debug("log")
+        import log
         print("_processCommandlineArgs with beforeloaded = ",beforeLoaded)
         if beforeLoaded:
             if self.args.get('noshaders', False):
@@ -851,10 +915,12 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Events
     def onStart(self, event):
+        debug("log")
         print("onStart is invoked from qtui so it will start startupSequence")
         self.startupSequence()
 
     def onStop(self, event):
+        debug("log")
         if self.getSetting('restoreWindowSize'):
             self.setSetting('windowGeometry', self.mainwin.storeGeometry())
 
@@ -864,9 +930,11 @@ class MHApplication(gui3d.Application, mh.Application):
         self.files.load.unload()
 
     def onQuit(self, event):
+        debug("log")
         self.promptAndExit()
 
     def onMouseDown(self, event):
+        debug("log")
         if self.selectedHuman.isVisible():
             # Normalize modifiers
             modifiers = mh.getKeyModifiers() & (mh.Modifiers.CTRL | mh.Modifiers.ALT | mh.Modifiers.SHIFT)
@@ -879,6 +947,7 @@ class MHApplication(gui3d.Application, mh.Application):
                     self.modelCamera.mousePickHumanCenter(event.x, event.y)
 
     def onMouseDragged(self, event):
+        debug("log")
 
         if self.selectedHuman.isVisible():
             # Normalize modifiers
@@ -888,6 +957,7 @@ class MHApplication(gui3d.Application, mh.Application):
                 self.mouseActions[(modifiers, event.button)](event)
 
     def onMouseWheel(self, event):
+        debug("log")
         if self.selectedHuman.isVisible():
             zoomOut = event.wheelDelta > 0
             if self.getSetting('invertMouseWheel'):
@@ -903,44 +973,50 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Undo-redo
     def do(self, action):
+        debug("log")
         if action.do():
             self.undoStack.append(action)
             del self.redoStack[:]
             self.currentFile.changed()
-            log.message('do %s', action.name)
+            # log.message('do %s', action.name)
             self.syncUndoRedo()
 
     def did(self, action):
+        debug("log")
         self.undoStack.append(action)
         self.currentFile.changed()
         del self.redoStack[:]
-        log.message('did %s', action.name)
+        # log.message('did %s', action.name)
         self.syncUndoRedo()
 
     def undo(self):
+        debug("log")
         if self.undoStack:
             action = self.undoStack.pop()
-            log.message('undo %s', action.name)
+            # log.message('undo %s', action.name)
             action.undo()
             self.redoStack.append(action)
             self.currentFile.changed()
             self.syncUndoRedo()
 
     def redo(self):
+        debug("log")
         if self.redoStack:
             action = self.redoStack.pop()
-            log.message('redo %s', action.name)
+            # log.message('redo %s', action.name)
             action.do()
             self.undoStack.append(action)
             self.currentFile.changed()
             self.syncUndoRedo()
 
     def syncUndoRedo(self):
+        debug("log")
         self.actions.undo.setEnabled(bool(self.undoStack))
         self.actions.redo.setEnabled(bool(self.redoStack))
         self.redraw()
 
     def clearUndoRedo(self):
+        debug("log")
         self.undoStack = []
         self.redoStack = []
         self.syncUndoRedo()
@@ -948,6 +1024,7 @@ class MHApplication(gui3d.Application, mh.Application):
     # Settings
 
     def loadSettings(self):
+        debug("log")
         with inFile("settings.ini") as f:
             settings = {}
             if f:
@@ -1007,6 +1084,7 @@ class MHApplication(gui3d.Application, mh.Application):
             self.helpIds = helpIds
 
     def saveSettings(self, promptOnFail=False):
+        debug("log")
         try:
             if not os.path.exists(mh.getPath()):
                 os.makedirs(mh.getPath())
@@ -1037,6 +1115,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Themes
     def setTheme(self, theme):
+        debug("log")
         # Disabling this check allows faster testing of a skin by reloading it.
         #if self.theme == theme:
         #    return
@@ -1045,6 +1124,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self.clearColor = [0.5, 0.5, 0.5]
         self.gridColor = [1.0, 1.0, 1.0]
         self.gridSubColor = [0.7, 0.7, 0.7]
+        import log
         log._logLevelColors[log.DEBUG] = 'grey'
         log._logLevelColors[log.NOTICE] = 'blue'
         log._logLevelColors[log.WARNING] = 'darkorange'
@@ -1063,6 +1143,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
                 if len(lineData) > 0:
                     if lineData[0] == "version":
+                        pass
                         log.message('Theme %s version %s', theme, lineData[1])
                     elif lineData[0] == "color":
                         if lineData[1] == "clear":
@@ -1128,22 +1209,27 @@ class MHApplication(gui3d.Application, mh.Application):
         self.redraw()
 
     def reloadIcons(self):
+        debug("log")
         if not self.actions:
             return
         for action in self.actions:
             action.setIcon(gui.Action.getIcon(action.name))
 
     def getLookAndFeelStyles(self):
+        debug("log")
         return [ str(style) for style in gui.QtGui.QStyleFactory.keys() ]
 
     def setLookAndFeel(self, platform):
+        debug("log")
         style = gui.QtGui.QStyleFactory.create(platform)
         self.setStyle(style)
 
     def getLookAndFeel(self):
+        debug("log")
         return str(self.style().objectName())
 
     def getThemeResource(self, folder, id):
+        debug("log")
         if '/' in id:
             return id
         path = os.path.join(mh.getSysDataPath("themes/"), self.theme, folder, id)
@@ -1153,11 +1239,14 @@ class MHApplication(gui3d.Application, mh.Application):
             return os.path.join(mh.getSysDataPath("themes/default/"), folder, id)
 
     def setLanguage(self, lang):
+        # debug("log")
+        import log
         log.debug("Setting language to %s", lang)
         language.language.setLanguage(lang)
         self.setSetting('rtl', language.language.rtl)
 
     def getLanguages(self):
+        debug("log")
         """
         The languages available on this MH installation, by listing all .json
         files in the languages folder in user and system data path.
@@ -1165,17 +1254,21 @@ class MHApplication(gui3d.Application, mh.Application):
         return language.getLanguages()
 
     def getLanguageString(self, string, appendData=None, appendFormat=None):
+        # debug("log")
         return language.language.getLanguageString(string,appendData,appendFormat)
 
     def dumpMissingStrings(self):
+        debug("log")
         language.language.dumpMissingStrings()
 
     # Caption
     def setCaption(self, caption):
+        debug("log")
         """Set the main window caption."""
         mh.setCaption(caption)
 
     def updateFilenameCaption(self):
+        debug("log")
         """Calculate and set the window title according to the
         name of the current open file and the version of MH."""
         filename = self.currentFile.name
@@ -1191,17 +1284,20 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Global status bar
     def status(self, text, *args):
+        debug("log")
         if self.statusBar is None:
             return
         self.statusBar.showMessage(text, *args)
 
     def statusPersist(self, text, *args):
+        debug("log")
         if self.statusBar is None:
             return
         self.statusBar.setMessage(text, *args)
 
     # Global progress bar
     def progress(self, value, text=None, *args):
+        debug("log")
         if text is not None:
             self.status(text, *args)
 
@@ -1228,6 +1324,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Global dialog
     def prompt(self, title, text, button1Label, button2Label=None, button1Action=None, button2Action=None, helpId=None, fmtArgs = None):
+        debug("log")
         if fmtArgs is None:
             fmtArgs = []
         elif isinstance(fmtArgs, str):
@@ -1238,6 +1335,7 @@ class MHApplication(gui3d.Application, mh.Application):
         return self.dialog.prompt(title, text, button1Label, button2Label, button1Action, button2Action, helpId, fmtArgs)
 
     def about(self):
+        debug("log")
         """
         Show about dialog
         """
@@ -1248,6 +1346,7 @@ class MHApplication(gui3d.Application, mh.Application):
         aboutbox.exec_()
 
     def credits(self):
+        debug("log")
         """
         Show credits dialog
         """
@@ -1257,6 +1356,7 @@ class MHApplication(gui3d.Application, mh.Application):
         aboutbox.exec_()
 
     def setGlobalCamera(self):
+        debug("log")
         human = self.selectedHuman
 
         tl = animation3d.Timeline(0.20)
@@ -1267,6 +1367,7 @@ class MHApplication(gui3d.Application, mh.Application):
         tl.start()
 
     def setTargetCamera(self, vIdx, zoomFactor = 1.0, animate = True):
+        debug("log")
         if isinstance(vIdx, (tuple, list)):
             return
         human = self.selectedHuman
@@ -1277,63 +1378,82 @@ class MHApplication(gui3d.Application, mh.Application):
             self.redraw()
 
     def setFaceCamera(self):
+        debug("log")
         self.setTargetCamera(132, 8.7)
 
     def setLeftHandFrontCamera(self):
+        debug("log")
         self.setTargetCamera(9828, 10)
 
     def setLeftHandTopCamera(self):
+        debug("log")
         self.setTargetCamera(9833, 10)
 
     def setRightHandFrontCamera(self):
+        debug("log")
         self.setTargetCamera(3160, 10)
 
     def setRightHandTopCamera(self):
         self.setTargetCamera(3165, 10)
+        debug("log")
 
     def setLeftFootFrontCamera(self):
+        debug("log")
         self.setTargetCamera(12832, 7.7)
 
     def setLeftFootLeftCamera(self):
+        debug("log")
         self.setTargetCamera(12823, 7)
 
     def setRightFootFrontCamera(self):
+        debug("log")
         self.setTargetCamera(6235, 7.7)
 
     def setRightFootRightCamera(self):
+        debug("log")
         self.setTargetCamera(6208, 7)
 
     def setLeftArmFrontCamera(self):
+        debug("log")
         self.setTargetCamera(9981, 4.2)
 
     def setLeftArmTopCamera(self):
+        debug("log")
         self.setTargetCamera(9996, 2.9)
 
     def setRightArmFrontCamera(self):
+        debug("log")
         self.setTargetCamera(3330, 4.2)
 
     def setRightArmTopCamera(self):
+        debug("log")
         self.setTargetCamera(3413, 2.9)
 
     def setLeftLegFrontCamera(self):
+        debug("log")
         self.setTargetCamera(11325, 2.7)
 
     def setLeftLegLeftCamera(self):
+        debug("log")
         self.setTargetCamera(11381, 2.3)
 
     def setRightLegFrontCamera(self):
+        debug("log")
         self.setTargetCamera(4707, 2.7)
 
     def setRightLegRightCamera(self):
+        debug("log")
         self.setTargetCamera(4744, 2.3)
 
     def getScene(self):
+        debug("log")
         """
         The scene used for rendering the viewport.
         """
         return self._scene
 
     def setScene(self, scene):
+        debug("log")
         """
         Set the scene used for rendering the viewport,
         and connect its events with appropriate handler methods.
@@ -1356,6 +1476,7 @@ class MHApplication(gui3d.Application, mh.Application):
     scene = property(getScene, setScene)
 
     def _sceneChanged(self, event):
+        debug("log")
         """
         Method to be called internally when the scene is modified,
         that updates the view according to the modified scene,
@@ -1373,6 +1494,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Shortcuts
     def setShortcut(self, modifier, key, action):
+        debug("log")
 
         shortcut = (modifier, key)
 
@@ -1386,6 +1508,7 @@ class MHApplication(gui3d.Application, mh.Application):
         return True
 
     def resetShortcuts(self):
+        debug("log")
 
         self.shortcuts = dict(self._default_shortcuts)
         for action, (modifier, key) in self.shortcuts.items():
@@ -1394,10 +1517,12 @@ class MHApplication(gui3d.Application, mh.Application):
                 mh.setShortcut(modifier, key, action)
 
     def getShortcut(self, action):
+        debug("log")
         return self.shortcuts.get(action.name)
 
     # Mouse actions
     def setMouseAction(self, modifier, key, method):
+        debug("log")
 
         mouseAction = (modifier, key)
 
@@ -1419,6 +1544,7 @@ class MHApplication(gui3d.Application, mh.Application):
         return True
 
     def getMouseAction(self, method):
+        debug("log")
 
         for mouseAction, m in self.mouseActions.items():
             if m == method:
@@ -1427,11 +1553,13 @@ class MHApplication(gui3d.Application, mh.Application):
     # Load handlers
 
     def addLoadHandler(self, keyword, handler):
+        debug("log")
         """Register a handler for handling the loading of the specified
         keyword from MHM file."""
         self.loadHandlers[keyword] = handler
 
     def getLoadHandler(self, keyword):
+        debug("log")
         """Retrieve the plugin or handler that handles the loading of the
         specified keyword from MHM file.
         """
@@ -1440,6 +1568,7 @@ class MHApplication(gui3d.Application, mh.Application):
     # Save handlers
 
     def addSaveHandler(self, handler, priority = None):
+        debug("log")
         """
         Register a handler to trigger when a save action happens, when called
         the handler gets the chance to write property lines to the MHM file.
@@ -1455,10 +1584,12 @@ class MHApplication(gui3d.Application, mh.Application):
     # Shortcut methods
 
     def goToModelling(self):
+        debug("log")
         mh.changeCategory("Modelling")
         self.redraw()
 
     def doSave(self):
+        debug("log")
         if self.currentFile.path:
             from guisave import saveMHM
             self.currentTask.hide()
@@ -1469,55 +1600,68 @@ class MHApplication(gui3d.Application, mh.Application):
             self.goToSave()
 
     def goToSave(self):
+        debug("log")
         mh.changeTask("Files", "Save")
         self.redraw()
 
     def goToLoad(self):
+        debug("log")
         mh.changeTask("Files", "Load")
         self.redraw()
 
     def goToExport(self):
+        debug("log")
         mh.changeTask("Files", "Export")
         self.redraw()
 
     def goToRendering(self):
+        debug("log")
         mh.changeCategory("Rendering")
         self.redraw()
 
     def goToHelp(self):
         mh.changeCategory("Help")
+        debug("log")
 
     def toggleSolid(self):
+        debug("log")
         self.selectedHuman.setSolid(not self.actions.wireframe.isChecked())
         self.redraw()
 
     def toggleSubdivision(self):
+        debug("log")
         self.selectedHuman.setSubdivided(self.actions.smooth.isChecked(), True)
         self.redraw()
 
     def togglePose(self):
+        debug("log")
         self.selectedHuman.setPosed(self.actions.pose.isChecked())
         self.redraw()
 
     def toggleGrid(self):
+        debug("log")
         if self.backplaneGrid and self.groundplaneGrid:
             self.backplaneGrid.setVisibility( self.actions.grid.isChecked() )
             self.groundplaneGrid.setVisibility( self.actions.grid.isChecked() )
             self.redraw()
 
     def symmetryRight(self):
+        debug("log")
         human = self.selectedHuman
         self.do( SymmetryAction(human, 'r') )
 
     def symmetryLeft(self):
+        debug("log")
         human = self.selectedHuman
         self.do( SymmetryAction(human, 'l') )
 
     def symmetry(self):
+        debug("log")
         human = self.selectedHuman
         human.symmetryModeEnabled = self.actions.symmetry.isChecked()
 
     def grabScreen(self):
+        debug("log")
         import datetime
         grabPath = mh.getPath('grab')
         if not os.path.exists(grabPath):
@@ -1528,12 +1672,14 @@ class MHApplication(gui3d.Application, mh.Application):
         self.status("Screengrab saved to %s", filename)
 
     def resetHuman(self):
+        debug("log")
         if self.currentFile.modified:
             self.prompt('Reset', 'By resetting the human you will lose all your changes, are you sure?', 'Yes', 'No', self._resetHuman)
         else:
             self._resetHuman()
 
     def _resetHuman(self):
+        debug("log")
         self.selectedHuman.resetMeshValues()
         self.selectedHuman.applyAllTargets()
         self.clearUndoRedo()
@@ -1542,6 +1688,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Camera navigation
     def rotateCamera(self, axis, amount):
+        debug("log")
         self.modelCamera.addRotation(axis, amount)
         if axis == 1 and self.modelCamera.getRotation()[1] in [0, 90, 180, 270]:
             # Make sure that while rotating the grid never appears
@@ -1549,77 +1696,99 @@ class MHApplication(gui3d.Application, mh.Application):
         self.redraw()
 
     def panCamera(self, axis, amount):
+        debug("log")
         self.modelCamera.addTranslation(axis, amount)
         self.redraw()
 
     def cameraSpeed(self):
+        debug("log")
         if mh.getKeyModifiers() & mh.Modifiers.SHIFT:
             return self.getSetting('highspeed')
         else:
             return self.getSetting('lowspeed')
 
     def zoomCamera(self, amount):
+        debug("log")
         self.modelCamera.addZoom(amount * self.cameraSpeed())
         self.redraw()
 
     def rotateAction(self, axis):
+        debug("log")
         return animation3d.RotateAction(self.modelCamera, self.modelCamera.getRotation(), axis)
 
     def axisView(self, axis):
+        debug("log")
         tmp = self.modelCamera.limitInclination
         self.modelCamera.limitInclination = False
         animation3d.animate(self, 0.20, [self.rotateAction(axis)])
         self.modelCamera.limitInclination = tmp
 
     def rotateDown(self):
+        debug("log")
         self.rotateCamera(0, 5.0)
 
     def rotateUp(self):
+        debug("log")
         self.rotateCamera(0, -5.0)
 
     def rotateLeft(self):
+        debug("log")
         self.rotateCamera(1, -5.0)
 
     def rotateRight(self):
+        debug("log")
         self.rotateCamera(1, 5.0)
 
     def panUp(self):
+        debug("log")
         self.panCamera(1, 0.05)
 
     def panDown(self):
         self.panCamera(1, -0.05)
+        debug("log")
 
     def panRight(self):
+        debug("log")
         self.panCamera(0, 0.05)
 
     def panLeft(self):
+        debug("log")
         self.panCamera(0, -0.05)
 
     def zoomOut(self):
+        debug("log")
         self.zoomCamera(0.65)
 
     def zoomIn(self):
+        debug("log")
         self.zoomCamera(-0.65)
 
     def frontView(self):
+        debug("log")
         self.axisView([0.0, 0.0, 0.0])
 
     def rightView(self):
+        debug("log")
         self.axisView([0.0, 90.0, 0.0])
 
     def topView(self):
+        debug("log")
         self.axisView([90.0, 0.0, 0.0])
 
     def backView(self):
         self.axisView([0.0, 180.0, 0.0])
+        debug("log")
 
     def leftView(self):
+        debug("log")
         self.axisView([0.0, -90.0, 0.0])
 
     def bottomView(self):
+        debug("log")
         self.axisView([-90.0, 0.0, 0.0])
 
     def resetView(self):
+        debug("log")
         cam = self.modelCamera
         animation3d.animate(self, 0.20, [
             self.rotateAction([0.0, 0.0, 0.0]),
@@ -1628,11 +1797,13 @@ class MHApplication(gui3d.Application, mh.Application):
 
     # Mouse actions
     def mouseTranslate(self, event):
+        debug("log")
 
         speed = self.cameraSpeed()
         self.modelCamera.addXYTranslation(event.dx * speed, event.dy * speed)
 
     def mouseRotate(self, event):
+        debug("log")
 
         speed = self.cameraSpeed()
 
@@ -1643,6 +1814,7 @@ class MHApplication(gui3d.Application, mh.Application):
 
     def mouseZoom(self, event):
 
+        debug("log")
         speed = self.cameraSpeed()
 
         if self.getSetting('invertMouseWheel'):
@@ -1651,15 +1823,18 @@ class MHApplication(gui3d.Application, mh.Application):
         self.modelCamera.addZoom( -0.05 * event.dy * speed )
 
     def mouseFocus(self, ev):
+        debug("log")
         pass
 
     def promptAndExit(self):
+        debug("log")
         if self.currentFile.modified:
             self.prompt('Exit', 'You have unsaved changes. Are you sure you want to exit the application?', 'Yes', 'No', self.stop)
         else:
             self.stop()
 
     def toggleProfiling(self):
+        debug("log")
         import profiler
         if self.actions.profiling.isChecked():
             profiler.start()
@@ -1670,6 +1845,7 @@ class MHApplication(gui3d.Application, mh.Application):
             mh.changeTask('Utilities', 'Profile')
 
     def createActions(self):
+        debug("log")
         """
         Creates the actions toolbar with icon buttons.
         """
@@ -1756,12 +1932,14 @@ class MHApplication(gui3d.Application, mh.Application):
 
 
     def createShortcuts(self):
+        debug("log")
         for action, (modifier, key) in self.shortcuts.items():
             action = getattr(self.actions, action, None)
             if action is not None:
                 mh.setShortcut(modifier, key, action)
 
     def OnInit(self):
+        debug("log")
         mh.Application.OnInit(self)
 
         #[BAL 07/14/2013] work around focus bug in PyQt on OS X
@@ -1771,7 +1949,7 @@ class MHApplication(gui3d.Application, mh.Application):
         self.setLanguage("english")
 
         self.loadSettings()
-
+        import log
         # Necessary because otherwise setting back to default theme causes crash
         log.message("Initializing default theme first.")
         self.setTheme("default")
@@ -1794,8 +1972,10 @@ class MHApplication(gui3d.Application, mh.Application):
             self.switchCategory(tab.name)
 
     def run(self):
+        debug("log")
         print("here at mhmain file to run start called..........")
         self.start()
 
     def addExporter(self, exporter):
+        debug("log")
         self.getCategory('Files').getTaskByName('Export').addExporter(exporter)

@@ -41,12 +41,21 @@ import humanmodifier
 import guimodifier
 import getpath
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
+
 
 def load(app):
+    debug("log")
+    print("here at 0_modeling_0_modifiers.py load function is invoked")
     category = app.getCategory('Modelling')
 
     humanmodifier.loadModifiers(getpath.getSysDataPath('modifiers/modeling_modifiers.json'), app.selectedHuman)
     guimodifier.loadModifierTaskViews(getpath.getSysDataPath('modifiers/modeling_sliders.json'), app.selectedHuman, category)
 
 def unload(app):
+    debug("log")
     pass

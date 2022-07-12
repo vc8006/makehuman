@@ -304,6 +304,8 @@ Bugs can be reported on the project's bug tracker(s):
 """
 
 
+
+
 class LicenseInfo(object):
     """
     License information for MakeHuman assets.
@@ -574,6 +576,13 @@ def getCredits(richtext=False):
     text = _wordwrap(text)
     return( _block(text))
 
+
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT,filemode='w')
+
+
 def main():
     # print(getCopyrightMessage(short=True) + "\n")
 
@@ -597,8 +606,8 @@ def main():
     # Pass release info to debug dump using environment variables
     os.environ['MH_FROZEN'] = "Yes" if isBuild() else "No"
     os.environ['MH_RELEASE'] = "Yes" if isRelease() else "No"
-
-    print("all settings imported done..................")
+    # import log
+    debug("all settings imported done..................")
     debug_dump()
     from core import G
     G.args = args
@@ -607,7 +616,7 @@ def main():
     if not args.get('debugnumpy', False):
         import numpy
         # Suppress runtime errors
-        numpy.seterr(all = 'ignore')
+        numpy.seterr(all = 'ignore') 
 
     # Here pyQt and PyOpenGL will be imported
     from mhmain import MHApplication

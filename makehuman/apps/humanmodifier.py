@@ -100,8 +100,16 @@ from functools import reduce
 # dependencies will be updated (this is a performance feature)
 realtimeDependencyUpdates = ['macrodetails', 'macrodetails-universal']
 
+
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT,filemode='w')
+
+import log
 class ModifierAction(guicommon.Action):
     def __init__(self, modifier, before, after, postAction):
+        # #debug("log")
         super(ModifierAction, self).__init__('Change modifier')
         self.human = modifier.human
         self.modifier = modifier
@@ -110,6 +118,7 @@ class ModifierAction(guicommon.Action):
         self.postAction = postAction
 
     def do(self):
+        # #debug("log")
         if self.after is None:
             # Reset modifier to default value, store old values of other modifiers
             # possibly involved
@@ -133,6 +142,7 @@ class ModifierAction(guicommon.Action):
         return True
 
     def undo(self):
+        # #debug("log")
         if isinstance(self.before, dict):
             # Undo reset of multiple modifiers
             for mName, mVal in self.before.items():
@@ -159,6 +169,7 @@ class Modifier(object):
     """
 
     def __init__(self, groupName, name):
+        # #debug("log")
         self.groupName = groupName.replace('/', '-')
         self.name = name.replace('/', '-')
 
@@ -180,20 +191,25 @@ class Modifier(object):
         self.human = None
 
     def setHuman(self, human):
+        #debug("log")
         self.human = human
         human.addModifier(self)
 
     @property
     def fullName(self):
+        # #debug("log")
         return self.groupName+"/"+self.name
 
     def getMin(self):
+        #debug("log")
         return 0.0
 
     def getMax(self):
+        #debug("log")
         return 1.0
 
     def setValue(self, value, skipDependencies=False):
+        #debug("log")
         value = self.clampValue(value)
         factors = self.getFactors(value)
 
@@ -208,11 +224,13 @@ class Modifier(object):
         self.propagateUpdate(realtime = False)
 
     def resetValue(self):
+        #debug("log")
         oldVal = self.getValue()
         self.setValue(self.getDefaultValue())
         return oldVal
 
     def propagateUpdate(self, realtime = False):
+        #debug("log")
         """
         Propagate modifier update to dependent modifiers
         """
@@ -243,6 +261,8 @@ class Modifier(object):
         return self._defaultValue
 
     def buildLists(self):
+        #debug("log")
+
         # Collect vertex and face indices if we didn't yet
         if self.verts is None and self.faces is None:
             # Collect verts
@@ -257,6 +277,7 @@ class Modifier(object):
             self.faces = self.human.meshData.getFacesForVertices(self.verts)
 
     def updateValue(self, value, updateNormals=1, skipUpdate=False):
+        #debug("log")
         if self.verts is None and self.faces is None:
             self.buildLists()
 
@@ -292,6 +313,7 @@ class Modifier(object):
         self.human.callEvent('onChanging', event)
 
     def getSymmetrySide(self):
+        #debug("log")
         """
         The side this modifier takes in a symmetric pair of two modifiers.
         Returns 'l' for left, 'r' for right.
@@ -314,6 +336,7 @@ class Modifier(object):
         return self._symmSide
 
     def getSymmetricOpposite(self):
+        #debug("log")
         """
         The name of the modifier symmetric to this one. None if there is no
         symmetric opposite of this modifier.
@@ -327,18 +350,22 @@ class Modifier(object):
             return None
 
     def getSimilar(self):
+        #debug("log")
         """
         Retrieve the other modifiers of the same type on the human.
         """
         return [m for m in self.human.getModifiersByType(type(self)) if m != self]
 
     def isMacro(self):
+        #debug("log")
         return self.macroVariable is not None
 
     def __str__(self):
+        #debug("log")
         return "%s %s" % (type(self).__name__, self.fullName)
 
     def __repr__(self):
+        #debug("log")
         return self.__str__()
 
 
@@ -348,6 +375,7 @@ class SimpleModifier(Modifier):
     """
 
     def __init__(self, groupName, basepath, targetpath):  #template):
+        #debug("log")
         import os
         name = targetpath.replace('.target', '')
         name = name.replace('/', '-')
@@ -362,11 +390,13 @@ class SimpleModifier(Modifier):
         #log.debug("SimpleModifier(%s,%s)  :             %s", groupName, template, self.fullName)
 
     def expandTemplate(self, targets):
+        #debug("log")
         targets = [(target[0], target[1] + ['dummy']) for target in targets]
 
         return targets
 
     def getFactors(self, value):
+        #debug("log")
         # TODO this is useless
         factors = {
             'dummy': 1.0
@@ -375,6 +405,7 @@ class SimpleModifier(Modifier):
         return factors
 
     def clampValue(self, value):
+        #debug("log")
         return max(0.0, min(1.0, value))
 
 class ManagedTargetModifier(Modifier):
@@ -384,10 +415,12 @@ class ManagedTargetModifier(Modifier):
     """
 
     def __init__(self, groupName, name):
+        # #debug("log")
         super(ManagedTargetModifier, self).__init__(groupName, name)
 
     @staticmethod
     def findTargets(path):
+        # #debug("log")
         """
         Retrieve a list of targets grouped under the specified target path
         (which is not directly a filesystem path but rather an abstraction
@@ -439,6 +472,7 @@ class ManagedTargetModifier(Modifier):
 
     @staticmethod
     def findMacroDependencies(path):
+        # #debug("log")
         result = set()
         if path is None:
             return result
@@ -451,6 +485,7 @@ class ManagedTargetModifier(Modifier):
         return result
 
     def clampValue(self, value):
+        #debug("log")
         value = min(1.0, value)
         if self.left is not None:
             value = max(-1.0, value)
@@ -459,6 +494,7 @@ class ManagedTargetModifier(Modifier):
         return value
 
     def setValue(self, value, skipDependencies=False):
+        #debug("log")
         value = self.clampValue(value)
         factors = self.getFactors(value)
 
@@ -473,6 +509,7 @@ class ManagedTargetModifier(Modifier):
         self.propagateUpdate(realtime = False)
 
     def getValue(self):
+        #debug("log")
         right = sum([self.human.getDetail(target[0]) for target in self.r_targets])
         if right:
             return right
@@ -491,6 +528,7 @@ class UniversalModifier(ManagedTargetModifier):
     the targets module.
     """
     def __init__(self, groupName, targetName, leftExt=None, rightExt=None, centerExt=None):
+        # #debug("log")
         self.targetName = groupName + "-" + targetName
         if leftExt and rightExt:
             self.left = self.targetName + "-" + leftExt
@@ -528,12 +566,14 @@ class UniversalModifier(ManagedTargetModifier):
         self.targets = self.l_targets + self.r_targets + self.c_targets
 
     def getMin(self):
+        #debug("log")
         if self.left:
             return -1.0
         else:
             return 0.0
 
     def getFactors(self, value):
+        #debug("log")
         factors = super(UniversalModifier, self).getFactors(value)
 
         if self.left is not None:
@@ -555,6 +595,7 @@ class MacroModifier(ManagedTargetModifier):
     by influencing a different macro variable.
     """
     def __init__(self, groupName, variable):
+        #debug("log")
         super(MacroModifier, self).__init__(groupName, variable)
         self._defaultValue = 0.5
 
@@ -578,9 +619,11 @@ class MacroModifier(ManagedTargetModifier):
 
     @property
     def variable(self):
+        #debug("log")
         return self.name
 
     def getMacroVariable(self):
+        #debug("log")
         """
         The macro variable modified by this modifier.
         """
@@ -594,22 +637,27 @@ class MacroModifier(ManagedTargetModifier):
         return None
 
     def getValue(self):
+        #debug("log")
         return getattr(self.human, self.getter)()
 
     def setValue(self, value, skipDependencies = False):
+        #debug("log")
         value = self.clampValue(value)
         getattr(self.human, self.setter)(value, updateModifier=False)
         super(MacroModifier, self).setValue(value, skipDependencies)
 
     def clampValue(self, value):
+        #debug("log")
         return max(0.0, min(1.0, value))
 
     def getFactors(self, value):
+        #debug("log")
         factors = super(MacroModifier, self).getFactors(value)
         factors[self.groupName] = 1.0
         return factors
 
     def buildLists(self):
+        #debug("log")
         pass
 
 class EthnicModifier(MacroModifier):
@@ -618,12 +666,14 @@ class EthnicModifier(MacroModifier):
     whose total sum of values has to sum to 1.
     """
     def __init__(self, groupName, variable):
+        #debug("log")
         super(EthnicModifier, self).__init__(groupName, variable)
 
         # We assume there to be only 3 ethnic modifiers
         self._defaultValue = 1.0/3
 
     def resetValue(self):
+        #debug("log")
         """
         Resetting one ethnic modifier restores all ethnic modifiers to their
         default position.
@@ -642,6 +692,7 @@ class EthnicModifier(MacroModifier):
         return oldVals
 
 def getTargetWeights(targets, factors, value = 1.0, ignoreNotfound = False):
+    #debug("log")
     result = dict()
     if ignoreNotfound:
         for (tpath, tfactors) in targets:
@@ -652,6 +703,7 @@ def getTargetWeights(targets, factors, value = 1.0, ignoreNotfound = False):
     return result
 
 def debugModifiers():
+    #debug("log")
     human = G.app.selectedHuman
     modifierNames = sorted(human.modifierNames)
     for mName in modifierNames:
@@ -664,6 +716,7 @@ def debugModifiers():
         log.debug("    description: %s\n", m.description)
 
 def loadModifiers(filename, human):
+    #debug("log")
     """
     Load modifiers from a modifier definition file.
     """

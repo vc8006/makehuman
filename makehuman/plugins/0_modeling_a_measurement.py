@@ -370,6 +370,8 @@ def load(app):
     """
     Plugin load function, needed by design.
     """
+    print("here at 0_modeling_a_measurement.py load function is invoked")
+
     category = app.getCategory('Modelling')
 
     humanmodifier.loadModifiers(getpath.getSysDataPath('modifiers/measurement_modifiers.json'), app.selectedHuman)

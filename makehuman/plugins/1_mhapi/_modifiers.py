@@ -13,17 +13,25 @@ import algos3d
 import events3d
 from core import G
 from codecs import open
- 
+  
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
+import log
 class Modifiers(NameSpace):
     """This namespace wraps calls concerning modifiers and targets."""
 
     def __init__(self,api):
+        debug("log")
         self.api = api
         NameSpace.__init__(self)
         self.human = api.internals.getHuman()
         self.trace()
 
     def _threadSafeApplyAllTargets(self):
+        debug("log")
         algos3d.resetObj(self.human.meshData)
         for (targetPath, morphFactor) in self.human.targetsDetailStack.items():
             algos3d.loadTranslationTarget(self.human.meshData, targetPath, morphFactor, None, 0, 0)
@@ -41,6 +49,7 @@ class Modifiers(NameSpace):
         pass
 
     def applyModifier(self, modifierName, power, assumeThreading = False):
+        debug("log")
         modifier = self.human.getModifier(modifierName)
         modifier.setValue(power)
         if assumeThreading:
@@ -50,6 +59,7 @@ class Modifiers(NameSpace):
         mh.redraw()
 
     def applyTarget(self,targetName,power, assumeThreading = False):
+        debug("log")
         self.human.setDetail(mh.getSysDataPath("targets/" + targetName + ".target"), power)
         if assumeThreading:
             self._threadSafeApplyAllTargets()
@@ -58,6 +68,7 @@ class Modifiers(NameSpace):
         mh.redraw()
 
     def getAppliedTargets(self):
+        debug("log")
         targets = dict()
         for target in self.human.targetsDetailStack.keys():
             paths = target.split('/data/targets/')
@@ -65,32 +76,40 @@ class Modifiers(NameSpace):
         return targets
 
     def setAge(self,age):
+        debug("log")
         self.human.setAge(age)
         mh.redraw()
 
     def setWeight(self,weight):
         self.human.setWeight(weight)
+        debug("log")
         mh.redraw()
 
     def setMuscle(self,muscle):
+        debug("log")
         self.human.setMuscle(muscle)
         mh.redraw()
 
     def setHeight(self,height):
+        debug("log")
         self.human.setHeight(height)
         mh.redraw()
 
     def setGender(self,gender):
+        debug("log")
         self.human.setGender(gender)
         mh.redraw()
 
     def getAvailableModifierNames(self):
+        debug("log")
         return sorted( self.human.getModifierNames() )
 
     def applySymmetryLeft(self):
+        debug("log")
         self.human.applySymmetryLeft()
 
     def applySymmetryRight(self):
+        debug("log")
         self.human.applySymmetryRight()
 
 

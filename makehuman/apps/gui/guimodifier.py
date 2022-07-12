@@ -50,8 +50,15 @@ import language
 import collections
 from mesh_operations import calculateSurface
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
+import log
 class ModifierTaskView(gui3d.TaskView):
     def __init__(self, category, name, label=None, saveName=None, cameraView=None):
+        debug("log")
         if label is None:
             label = name.capitalize()
         if saveName is None:
@@ -74,6 +81,7 @@ class ModifierTaskView(gui3d.TaskView):
         self.human = gui3d.app.selectedHuman
 
     def addSlider(self, sliderCategory, slider, enabledCondition=None):
+        debug("log")
         # Get category groupbox
         categoryName = sliderCategory.capitalize()
         if categoryName not in self.groupBoxes:
@@ -98,12 +106,15 @@ class ModifierTaskView(gui3d.TaskView):
         self.sliders.append(slider)
 
     def updateMacro(self):
+        debug("log")
         self.human.updateMacroModifiers()
 
     def getModifiers(self):
+        debug("log")
         return self.modifiers
 
     def onShow(self, event):
+        debug("log")
         gui3d.TaskView.onShow(self, event)
 
         # Only show macro statistics in status bar for Macro modeling task
@@ -117,6 +128,7 @@ class ModifierTaskView(gui3d.TaskView):
         self.syncSliders()
 
     def syncSliders(self):
+        debug("log")
         for slider in self.sliders:
             slider.update()
             if slider.enabledCondition:
@@ -124,12 +136,14 @@ class ModifierTaskView(gui3d.TaskView):
                 slider.setEnabled(enabled)
 
     def onHide(self, event):
+        debug("log")
         super(ModifierTaskView, self).onHide(event)
 
         if self.name == "Macro modelling":
             self.setStatus('')
 
     def onHumanChanged(self, event):
+        debug("log")
         # Update sliders to modifier values
         self.syncSliders()
 
@@ -140,17 +154,21 @@ class ModifierTaskView(gui3d.TaskView):
             self.showMacroStatus()
 
     def loadHandler(self, human, values, strict):
+        debug("log")
         pass
 
     def saveHandler(self, human, file):
+        debug("log")
         pass
 
     def setCamera(self):
+        debug("log")
         if self.cameraFunc:
             f = getattr(G.app, self.cameraFunc)
             f()
 
     def showMacroStatus(self):
+        debug("log")
         human = G.app.selectedHuman
 
         if human.getGender() == 0.0:
@@ -185,16 +203,19 @@ class ModifierTaskView(gui3d.TaskView):
         self.setStatus([ ['Gender',': %s  '], ['Age',': %d  '], ['Muscle',': %.2f %%  '], ['Weight',': %.2f %s  '], ['Height',': %.2f %s'] ], gender, age, muscle, weight, w_units, height, l_units)
 
     def setStatus(self, format, *args):
+        debug("log")
         G.app.statusPersist(format, *args)
 
 
 class GroupBoxRadioButton(gui.RadioButton):
     def __init__(self, task, group, label, groupBox, selected=False):
+        debug("log")
         super(GroupBoxRadioButton, self).__init__(group, label, selected)
         self.groupBox = groupBox
         self.task = task
 
     def onClicked(self, event):
+        debug("log")
         self.task.groupBox.showWidget(self.groupBox)
         #self.task.onSliderFocus(self.groupBox.children[0]) # TODO needed for measurement
 
@@ -211,6 +232,7 @@ def _getCamFunc(cameraName):
  
 
 def loadModifierTaskViews(filename, human, category, taskviewClass=None):
+    debug("log")
     """
     Create modifier task views from modifiersliders defined in slider definition
     file.
@@ -223,9 +245,10 @@ def loadModifierTaskViews(filename, human, category, taskviewClass=None):
     data = json.load(open(filename, 'r', encoding='utf-8'), object_pairs_hook=OrderedDict)
     taskViews = []
     # Create task views
+    print("from data/modifiers/modeling_sliders.json file we are getting values at guimodiifier.py")
     for taskName, taskViewProps in data.items():
 
-        print('printing tasksName fro guimodifier.py /////////////\\\\\\\\\ ',taskName)
+        print('printing tasksName from guimodifier.py /////////////\\\\\\\\\ ',taskName)
 
         sName = taskViewProps.get('saveName', None)
         label = taskViewProps.get('label', None)

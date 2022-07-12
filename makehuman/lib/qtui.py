@@ -723,11 +723,9 @@ class Application(QtWidgets.QApplication, events3d.EventHandler):
         self.log_window = LogWindow()
         
     def started(self):
-        print("started function is called here which will start onStart at mhmain file")
         self.callEvent('onStart', None)
 
     def start(self):
-        print("start is called here at qtui file which will start started")
         self.OnInit()
         self.callAsync(self.started)
         self.messages.start()
@@ -742,7 +740,7 @@ class Application(QtWidgets.QApplication, events3d.EventHandler):
         sys.exit()
         
     def redraw(self):
-        self.logger_redraw.debug('Application.redraw')
+        # self.logger_redraw.debug('Application.redraw')
         if self.mainwin and self.mainwin.canvas:
             self.mainwin.canvas.update()
 
@@ -762,7 +760,7 @@ class Application(QtWidgets.QApplication, events3d.EventHandler):
         super(Application, self).processEvents(flags)
 
     def event(self, event):
-        self.logger_event.debug('event(%s)', event)
+        # self.logger_event.debug('event(%s)', event)
         if event.type() == QtCore.QEvent.User:
             # Handle custom user-defined event (AsyncEvent)
             event.callback(*event.args, **event.kwargs)
@@ -771,11 +769,11 @@ class Application(QtWidgets.QApplication, events3d.EventHandler):
         return super(Application, self).event(event)
 
     def notify(self, object, event):
-        self.logger_event.debug('notify(%s, %s(%s))', object, event, event.type())
+        # self.logger_event.debug('notify(%s, %s(%s))', object, event, event.type())
         return super(Application, self).notify(object, event)
 
     def eventFilter(self, object, event):
-        self.logger_event.debug('eventFilter(%s, %s(%s))', object, event, event.type())
+        # self.logger_event.debug('eventFilter(%s, %s(%s))', object, event, event.type())
         return False
 
     def addEventHandler(self, handler, sortOrder=None):

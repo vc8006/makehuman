@@ -52,10 +52,16 @@ from mesh_operations import calculateSurface, calculateVolume
 
 from makehuman import getBasemeshVersion, getShortVersion, getVersionStr, getVersion
 
- 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
+
 class Human(guicommon.Object, animation.AnimatedMesh):
 
     def __init__(self, mesh):
+        debug("log")
         guicommon.Object.__init__(self, mesh)
 
         self.hasWarpTargets = False
@@ -106,17 +112,25 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.refreshStaticMeshes()
 
     def getName(self):
+        debug("log")
+
         return self._name
 
     def setName(self, name=''):
+        debug("log")
+
         self._name = name
 
     humanName = property(getName, setName)
 
     def getTags(self):
+        debug("log")
+
         return self._tags
 
     def setTags(self, tags):
+        debug("log")
+
         if not isinstance(tags, set):
             raise ValueError('Parameter must be set type')
         else:
@@ -128,26 +142,38 @@ class Human(guicommon.Object, animation.AnimatedMesh):
     tags = property(getTags, setTags)
 
     def addTag(self, tag=''):
+        debug("log")
+
         self._tags.add(tag.lower()[:25]) # Max. tag length is 25
 
     def clearTags(self):
+        debug("log")
+
         self._tags.clear()
 
     def getUuid(self):
+        debug("log")
+
         if self._uuid:
             return self._uuid
         else:
             return ''
 
     def setUuid(self, _uuid=''):
+        debug("log")
+
         self._uuid = _uuid
 
     def newUuid(self):
+        debug("log")
+
         self._uuid = str(uuid4())
         return self._uuid
 
 
     def setProxy(self, proxy):
+        debug("log")
+
         oldPxy = self.getProxy()
         oldPxyMesh = self.getProxyMesh()
         # Fit to basemesh in rest pose, then pose proxy
@@ -166,79 +192,94 @@ class Human(guicommon.Object, animation.AnimatedMesh):
 
     # TODO introduce better system for managing proxies, nothing done for clothes yet
     def setHairProxy(self, proxy):
+        debug("log")
+
         self._swapProxies(self._hairProxy, proxy)
         self._hairProxy = proxy
         event = events3d.HumanEvent(self, 'proxyChange')
         event.proxy = 'hair'
         self.callEvent('onChanged', event)
     def getHairProxy(self):
+        debug("log")
         return self._hairProxy
 
     hairProxy = property(getHairProxy, setHairProxy)
 
     def setEyesProxy(self, proxy):
+        debug("log")
         self._swapProxies(self._eyesProxy, proxy)
         self._eyesProxy = proxy
         event = events3d.HumanEvent(self, 'proxyChange')
         event.proxy = 'eyes'
         self.callEvent('onChanged', event)
     def getEyesProxy(self):
+        debug("log")
         return self._eyesProxy
 
     eyesProxy = property(getEyesProxy, setEyesProxy)
 
     def setEyebrowsProxy(self, proxy):
+        debug("log")
         self._swapProxies(self._eyebrowsProxy, proxy)
         self._eyebrowsProxy = proxy
         event = events3d.HumanEvent(self, 'proxyChange')
         event.proxy = 'eyebrows'
         self.callEvent('onChanged', event)
     def getEyebrowsProxy(self):
+        debug("log")
         return self._eyebrowsProxy
 
     eyebrowsProxy = property(getEyebrowsProxy, setEyebrowsProxy)
 
     def setEyelashesProxy(self, proxy):
+        debug("log")
         self._swapProxies(self._eyelashesProxy, proxy)
         self._eyelashesProxy = proxy
         event = events3d.HumanEvent(self, 'proxyChange')
         event.proxy = 'eyelashes'
         self.callEvent('onChanged', event)
     def getEyelashesProxy(self):
+        debug("log")
         return self._eyelashesProxy
 
     eyelashesProxy = property(getEyelashesProxy, setEyelashesProxy)
 
     def setTeethProxy(self, proxy):
+        debug("log")
         self._swapProxies(self._teethProxy, proxy)
         self._teethProxy = proxy
         event = events3d.HumanEvent(self, 'proxyChange')
         event.proxy = 'teeth'
         self.callEvent('onChanged', event)
     def getTeethProxy(self):
+        debug("log")
         return self._teethProxy
 
     teethProxy = property(getTeethProxy, setTeethProxy)
 
     def setTongueProxy(self, proxy):
+        debug("log")
         self._swapProxies(self._tongueProxy, proxy)
         self._tongueProxy = proxy
         event = events3d.HumanEvent(self, 'proxyChange')
         event.proxy = 'tongue'
         self.callEvent('onChanged', event)
     def getTongueProxy(self):
+        debug("log")
         return self._tongueProxy
 
     tongueProxy = property(getTongueProxy, setTongueProxy)
 
     @property
     def clothesProxies(self):
+        debug("log")
         """
         Read-only access to the clothes proxies attached to this human
         """
         return dict(self._clothesProxies)
 
     def addClothesProxy(self, proxy):
+        debug("log")
         uuid = proxy.getUuid()
         self._swapProxies(self._clothesProxies.get(uuid, None), proxy)
         self._clothesProxies[uuid] = proxy
@@ -249,6 +290,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanged', event)
 
     def removeClothesProxy(self, uuid):
+        debug("log")
         self._swapProxies(self._clothesProxies.get(uuid, None), None)
         event = events3d.HumanEvent(self, 'proxyChange')
         proxy = None
@@ -261,6 +303,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanged', event)
 
     def _swapProxies(self, oldPxy, newPxy):
+        debug("log")
         """
         Update bound meshes for animation when proxies are changed
         """
@@ -273,6 +316,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             self.refreshPose()
 
     def maskFaces(self):
+        debug("log")
         """
         Set up the initial (static) face mask for the human basemesh that hides
         all the faces associated with helper geometry.
@@ -290,6 +334,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.meshData.updateIndexBufferFaces()
 
     def hasGenitals(self):
+        debug("log")
         """
         Determines whether the human model has genitals geometry.
         Genitals geometry is present if the proxy (alt. topology)
@@ -301,6 +346,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return False
 
     def traceStack(self, all=True):
+        debug("log")
         """
         Debug helper
         :param all:
@@ -323,6 +369,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
                 log.debug("  %s%s: %s" % (stars, path, value))
 
     def traceBuffer(self, all=True, vertsToList=0):
+        debug("log")
         """
         Debug helper
         :param all:
@@ -363,6 +410,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
     '''
 
     def getProxies(self, includeHumanProxy = True):
+        debug("log")
         proxies = []
         for pxy in [
             self.hairProxy,
@@ -381,6 +429,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return proxies
 
     def getTypedSimpleProxies(self, ptype):
+        debug("log")
         ptype = ptype.capitalize()
         table = {
             'Hair' :     self.hairProxy,
@@ -396,9 +445,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             return None
 
     def getProxyObjects(self):
+        debug("log")
         return [ pxy.object for pxy in self.getProxies(includeHumanProxy=False) ]
 
     def getObjects(self, excludeZeroFaceObjs=False):
+        debug("log")
         """
         All mesh objects that belong to this human, usually everything that has
         to be exported.
@@ -415,6 +466,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
     # Overriding hide and show to account for both human base and the hairs!
 
     def show(self):
+        debug("log")
         self.visible = True
         for obj in self.getProxyObjects():
             if obj:
@@ -423,6 +475,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onShown', self)
 
     def hide(self):
+        debug("log")
 
         self.visible = False
         for obj in self.getProxyObjects():
@@ -434,6 +487,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
     # Overriding methods to account for both hair and base object
 
     def setPosition(self, position):
+        debug("log")
         dv = [x-y for x, y in zip(position, self.getPosition())]
         guicommon.Object.setPosition(self, position)
         for obj in self.getProxyObjects():
@@ -443,6 +497,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onTranslated', self)
 
     def setRotation(self, rotation):
+        debug("log")
         guicommon.Object.setRotation(self, rotation)
         for obj in self.getProxyObjects():
             if obj:
@@ -451,12 +506,14 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onRotated', self)
 
     def setSolid(self, *args, **kwargs):
+        debug("log")
         guicommon.Object.setSolid(self, *args, **kwargs)
         for obj in self.getProxyObjects():
             if obj:
                 obj.setSolid(*args, **kwargs)
 
     def setSubdivided(self, flag, *args, **kwargs):
+        debug("log")
         if flag != self.isSubdivided():
             proxies = [obj for obj in self.getProxyObjects() if obj]
             progress = Progress([len(self.mesh.coord)] +
@@ -472,6 +529,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             self.callEvent('onChanged', events3d.HumanEvent(self, 'smooth'))
 
     def setGender(self, gender, updateModifier = True):
+        debug("log")
         """
         Sets the gender of the model. 0 is female, 1 is male.
 
@@ -496,6 +554,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'gender'))
 
     def getGender(self):
+        debug("log")
         """
         The gender of this human as a float between 0 and 1.
         0 for completely female, 1 for fully male.
@@ -503,6 +562,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return self.gender
 
     def getDominantGender(self):
+        debug("log")
         """
         The dominant gender of this human as a string (male or female).
         None if both genders are equally represented.
@@ -515,10 +575,12 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             return None
 
     def _setGenderVals(self):
+        debug("log")
         self.maleVal = self.gender
         self.femaleVal = 1 - self.gender
 
     def setAge(self, age, updateModifier = True):
+        debug("log")
         """
         Sets the age of the model. 0 for 0 years old, 1 is 70. To set a
         particular age in years, use the formula age_value = age_in_years / 70.
@@ -544,12 +606,14 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'age'))
 
     def getAge(self):
+        debug("log")
         """
         Age of this human as a float between 0 and 1.
         """
         return self.age
 
     def getAgeYears(self):
+        debug("log")
         """
         Return the approximate age of the human in years.
         """
@@ -559,6 +623,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             return self.MID_AGE + ((self.MAX_AGE - self.MID_AGE) * 2) * (self.getAge() - 0.5)
 
     def setAgeYears(self, ageYears, updateModifier=True):
+        debug("log")
         """
         Set age in amount of years.
         """
@@ -572,6 +637,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.setAge(age, updateModifier)
 
     def _setAgeVals(self):
+        debug("log")
         """
         New system (A8):
         ----------------
@@ -600,6 +666,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             self.youngVal = 1 - self.oldVal
 
     def setWeight(self, weight, updateModifier = True):
+        debug("log")
         """
         Sets the amount of weight of the model. 0 for underweight, 1 for heavy.
 
@@ -624,25 +691,31 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'weight'))
 
     def getWeight(self):
+        debug("log")
         return self.weight
 
     def getBsa(self):
+        debug("log")
         return calculateSurface(self.meshData, vertGroups=['body'])/100
 
     def getVolume(self):
+        debug("log")
         return calculateVolume(self.meshData, vertGroups=['body'])/1000
 
     def getWeightKg(self):
+        debug("log")
         # Estimating weight using Mosteller's formula for body surface area estimation
         bsa = self.getBsa()
         return bsa * bsa * 3600 / self.getHeightCm()
 
     def _setWeightVals(self):
+        debug("log")
         self.maxweightVal = max(0.0, self.weight * 2 - 1)
         self.minweightVal = max(0.0, 1 - self.weight * 2)
         self.averageweightVal = 1 - (self.maxweightVal + self.minweightVal)
 
     def setMuscle(self, muscle, updateModifier = True):
+        debug("log")
         """
         Sets the amount of muscle of the model. 0 for flacid, 1 for muscular.
 
@@ -667,14 +740,18 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'muscle'))
 
     def getMuscle(self):
+        debug("log")
+
         return self.muscle
 
     def _setMuscleVals(self):
+        debug("log")
         self.maxmuscleVal = max(0.0, self.muscle * 2 - 1)
         self.minmuscleVal = max(0.0, 1 - self.muscle * 2)
         self.averagemuscleVal = 1 - (self.maxmuscleVal + self.minmuscleVal)
 
     def setHeight(self, height, updateModifier = True):
+        debug("log")
         if updateModifier:
             modifier = self.getModifier('macrodetails-height/Height')
             modifier.setValue(height)
@@ -689,9 +766,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'height'))
 
     def getHeight(self):
+        debug("log")
         return self.height
 
     def getHeightCm(self):
+        debug("log")
         """
         The height in cm.
         """
@@ -699,6 +778,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return 10*(bBox[1][1]-bBox[0][1])
 
     def getBoundingBox(self):
+        debug("log")
         """
         Returns the bounding box of the basemesh without the helpers, ignoring
         any other facemask.
@@ -706,6 +786,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return self.meshData.calcBBox(fixedFaceMask = self.staticFaceMask)
 
     def _setHeightVals(self):
+        debug("log")
         self.maxheightVal = max(0.0, self.height * 2 - 1)
         self.minheightVal = max(0.0, 1 - self.height * 2)
         if self.maxheightVal > self.minheightVal:
@@ -714,6 +795,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             self.averageheightVal = 1 - self.minheightVal
 
     def setBreastSize(self, size, updateModifier = True):
+        debug("log")
         if updateModifier:
             modifier = self.getModifier('breast/BreastSize')
             modifier.setValue(size)
@@ -728,9 +810,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'breastSize'))
 
     def getBreastSize(self):
+        debug("log")
         return self.breastSize
 
     def _setBreastSizeVals(self):
+        debug("log")
         self.maxcupVal = max(0.0, self.breastSize * 2 - 1)
         self.mincupVal = max(0.0, 1 - self.breastSize * 2)
         if self.maxcupVal > self.mincupVal:
@@ -739,6 +823,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             self.averagecupVal = 1 - self.mincupVal
 
     def setBreastFirmness(self, firmness, updateModifier = True):
+        debug("log")
         if updateModifier:
             modifier = self.getModifier('breast/BreastFirmness')
             modifier.setValue(firmness)
@@ -753,9 +838,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'breastFirmness'))
 
     def getBreastFirmness(self):
+        debug("log")
         return self.breastFirmness
 
     def _setBreastFirmnessVals(self):
+        debug("log")
         self.maxfirmnessVal = max(0.0, self.breastFirmness * 2 - 1)
         self.minfirmnessVal = max(0.0, 1 - self.breastFirmness * 2)
 
@@ -765,6 +852,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             self.averagefirmnessVal = 1 - self.minfirmnessVal
 
     def setBodyProportions(self, proportion, updateModifier = True):
+        debug("log")
         if updateModifier:
             modifier = self.getModifier('macrodetails-proportions/BodyProportions')
             modifier.setValue(proportion)
@@ -779,6 +867,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'bodyProportions'))
 
     def _setBodyProportionVals(self):
+        debug("log")
         self.idealproportionsVal = max(0.0, self.bodyProportions * 2 - 1)
         self.uncommonproportionsVal = max(0.0, 1 - self.bodyProportions * 2)
 
@@ -788,9 +877,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             self.regularproportionsVal = 1 - self.uncommonproportionsVal
 
     def getBodyProportions(self):
+        debug("log")
         return self.bodyProportions
 
     def setCaucasian(self, caucasian, sync=True, updateModifier = True):
+        debug("log")
         if updateModifier:
             modifier = self.getModifier('macrodetails/Caucasian')
             modifier.setValue(caucasian)
@@ -806,9 +897,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'caucasian'))
 
     def getCaucasian(self):
+        debug("log")
         return self.caucasianVal
 
     def setAfrican(self, african, sync=True, updateModifier = True):
+        debug("log")
         if updateModifier:
             modifier = self.getModifier('macrodetails/African')
             modifier.setValue(african)
@@ -824,9 +917,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'african'))
 
     def getAfrican(self):
+        debug("log")
         return self.africanVal
 
     def setAsian(self, asian, sync=True, updateModifier = True):
+        debug("log")
         if updateModifier:
             modifier = self.getModifier('macrodetails/Asian')
             modifier.setValue(asian)
@@ -842,9 +937,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanging', events3d.HumanEvent(self, 'asian'))
 
     def getAsian(self):
+        debug("log")
         return self.asianVal
 
     def _setEthnicVals(self, exclude=None):
+        debug("log")
         """
         Normalize the ethnic values (so that they sum to 1).
         """
@@ -888,6 +985,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
                 _setVal(e, remaining * (_getVal(e) / otherTotal) )
 
     def getEthnicity(self):
+        debug("log")
         """
         Return the most dominant ethnicity of this human, as a string (african,
         caucasian, asian).
@@ -914,6 +1012,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             return None
 
     def setDetail(self, name, value):
+        # debug("log")
         name = canonicalPath(name)
         if value:
             self.targetsDetailStack[name] = value
@@ -921,10 +1020,12 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             del self.targetsDetailStack[name]
 
     def getDetail(self, name):
+        # debug("log")
         name = canonicalPath(name)
         return self.targetsDetailStack.get(name, 0.0)
 
     def updateMacroModifiers(self):
+        debug("log")
         """Update the targetsDetailStack for this human
         determined by the macromodifier target combinations."""
         for modifier in self.modifiers:
@@ -933,6 +1034,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
 
     @property
     def modifiers(self):
+        debug("log")
         """
         All modifier objects attached to this human.
         """
@@ -940,18 +1042,21 @@ class Human(guicommon.Object, animation.AnimatedMesh):
 
     @property
     def modifierNames(self):
+        debug("log")
         """
         The names of all modifiers available.
         """
         return list(self._modifiers.keys())
 
     def getModifierNames(self):
+        debug("log")
         """
         The names of all modifiers available.
         """
         return self.modifierNames
 
     def getModifier(self, name):
+        debug("log")
         """
         Retrieve a modifier by name.
         Use '.modifierNames' to retrieve the names of all available modifiers.
@@ -960,6 +1065,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
 
     @property
     def modifierGroups(self):
+        debug("log")
         """
         The names of all groups in which the modifiers of this human are
         classified.
@@ -967,6 +1073,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return list(self._modifier_groups.keys())
 
     def getModifiersByGroup(self, groupName):
+        debug("log")
         """
         Get all modifiers for this human belonging to the same modifier group.
         NOTE: do not confuse groupName with facegroup names!
@@ -978,6 +1085,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             return []
 
     def getModifiersByType(self, classType):
+        debug("log")
         """
         Retrieve all modifiers of a specified class type.
         """
@@ -990,6 +1098,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return self._modifier_type_cache[classType.__name__]
 
     def addModifier(self, modifier):
+        debug("log")
         """
         Attach a new modifier to this human.
         """
@@ -1043,6 +1152,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
                 self.updateMacroModifiers()
 
     def getModifierDependencies(self, modifier, filter = None):
+        debug("log")
         """
         Retrieve all modifiers that should be updated if the specified modifier
         is updated. (forward dependency mapping)
@@ -1067,6 +1177,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return result
 
     def getModifiersAffectedBy(self, modifier, filter = None):
+        debug("log")
         """
         Reverse dependency search. Returns all modifier groups to update that
         are affected by the change in the specified modifier. (reverse 
@@ -1079,6 +1190,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             return [e for e in result if e in filter]
 
     def removeModifier(self, modifier):
+        debug("log")
         try:
             del self._modifiers[modifier.fullName]
             self._modifier_groups[modifier.groupName].remove(modifier)
@@ -1114,6 +1226,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             pass
 
     def _getModifierTargets(self):
+        debug("log")
         """
         Retrieve all targets controlled by modifiers currently attached to this
         human.
@@ -1121,12 +1234,14 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return set( [t[0] for m in self.modifiers for t in m.targets] )
 
     def getRestposeCoordinates(self):
+        # debug("log")
         """
         Retrieve human seed mesh vertex coordinates in rest pose.
         """
         return self.getRestCoordinates(self.meshData.name)
 
     def getJointPosition(self, jointName, rest_coord=True):
+        debug("log")
         """
         Get the position of a joint from the human mesh.
         This position is determined by the center of the joint helper with the
@@ -1139,12 +1254,14 @@ class Human(guicommon.Object, animation.AnimatedMesh):
             return skeleton._getHumanJointPosition(self, jointName, rest_coord)
 
     def getJoints(self):
+        debug("log")
         """
         Return names of joint positions defined as joint helpers on the basemesh.
         """
         return [ fg_name for fg_name in self.meshData.getFaceGroups() if fg_name.startswith('joint-') ]
 
     def applyAllTargets(self, update=True):
+        debug("log")
         """
         This method applies all targets, in function of age and sex
 
@@ -1209,6 +1326,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         progress(1.0)
 
     def getPartNameForGroupName(self, groupName):
+        debug("log")
         # TODO is this still used anywhere?
         for k in self.bodyZones:
             if k in groupName:
@@ -1216,6 +1334,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return None
 
     def applySymmetryLeft(self):
+        debug("log")
         """
         This method applies right to left symmetry to the currently selected
         body parts.
@@ -1226,6 +1345,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.symmetrize('l')
 
     def applySymmetryRight(self):
+        debug("log")
         """
         This method applies left to right symmetry to the currently selected
         body parts.
@@ -1236,6 +1356,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.symmetrize('r')
 
     def symmetrize(self, direction='r'):
+        debug("log")
         """
         This method applies either left to right or right to left symmetry to
         the currently selected body parts.
@@ -1268,6 +1389,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         # TODO emit event?
 
     def setDefaultValues(self):
+        debug("log")
         self.age = 0.5
         self.gender = 0.5
         self.weight = 0.5
@@ -1291,6 +1413,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.africanVal = 1.0/3
 
     def resetMeshValues(self):
+        debug("log")
         self.setSubdivided(False, update=False)
         self.setDefaultValues()
         self.resetBoundMeshes()
@@ -1310,6 +1433,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanged', events3d.HumanEvent(self, 'reset'))
 
     def _resetProxies(self):
+        debug("log")
         """
         Remove all attached proxies.
         For internal use only: does not emit events
@@ -1324,9 +1448,11 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self._clothesProxies = {}
 
     def getMaterial(self):
+        # debug("log")
         return super(Human, self).getMaterial()
 
     def setMaterial(self, mat):
+        debug("log")
         self.callEvent('onChanging', events3d.HumanEvent(self, 'material'))
         super(Human, self).setMaterial(mat)
         self.callEvent('onChanged', events3d.HumanEvent(self, 'material'))
@@ -1334,6 +1460,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
     material = property(getMaterial, setMaterial)
 
     def setSkeleton(self, skel):
+        debug("log")
         """Change user-selected skeleton.
         """
         self.callEvent('onChanging', events3d.HumanEvent(self, 'user-skeleton'))
@@ -1343,6 +1470,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanged', events3d.HumanEvent(self, 'user-skeleton'))
 
     def getSkeleton(self):
+        debug("log")
         """The user-selected skeleton. The skeleton that is shown on the human
         and that will be used for exporting.
         """
@@ -1354,6 +1482,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return self.skeleton
 
     def setBaseSkeleton(self, skel):
+        debug("log")
         print("here at human.py setBaseSkeleton is invoked with base_skel")
 
         """Set the reference skeleton, used for poses and weighting vertices.
@@ -1373,6 +1502,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.refreshPose()
 
     def updateVertexWeights(self, vertexWeights):
+        debug("log")
         for mName in self.getBoundMeshes():  # Meshes are unsubdivided
             # TODO perhaps this identity by name is not strong enough, or enforce unique names in AnimatedMesh
             if vertexWeights is None: 
@@ -1382,6 +1512,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
                 self._updateMeshVertexWeights(self.getBoundMesh(mName)[0], vertexWeights)
 
     def resetBoundMeshes(self):
+        debug("log")
         """
         Remove all bound meshes except for the basemesh.
         """
@@ -1390,6 +1521,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
                 self.removeBoundMesh(mName)
 
     def _updateMeshVertexWeights(self, mesh, bodyVertexWeights=None):
+        debug("log")
         obj = mesh.object
 
         if not obj:
@@ -1420,6 +1552,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
 
 
     def getVertexWeights(self, skel=None):
+        debug("log")
         """Get vertex weights for human body. Optionally remap them to fit a
         user-selected skeleton. If no skel argument is provided, the weights
         for the base skeleton are returned.
@@ -1435,6 +1568,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         return bodyWeights
 
     def setPosed(self, posed):
+        debug("log")
         event = events3d.HumanEvent(self, 'poseState')
         event.state = posed
         self.callEvent('onChanging', event)
@@ -1444,6 +1578,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanged', event)
 
     def setActiveAnimation(self, anim_name):
+        debug("log")
         event = events3d.HumanEvent(self, 'poseChange')
         event.pose = anim_name
         self.callEvent('onChanging', event)
@@ -1453,6 +1588,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanged', event)
 
     def refreshPose(self, updateIfInRest=False):
+        debug("log")
         # TODO investigate why at startup this is called so often
         event = events3d.HumanEvent(self, 'poseRefresh')
         self.callEvent('onChanging', event)
@@ -1466,6 +1602,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.callEvent('onChanged', event)
 
     def load(self, filename, update=True, strict=False):
+        debug("log")
 
         def _compare_versions(mhmVersion,pgmVersion):
             """ Return true if major+minor matches, false if they do not. Ignore patch number. """
@@ -1597,6 +1734,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         log.message("Done loading MHM file.")
 
     def save(self, filename):
+        debug("log")
         from progress import Progress
         progress = Progress(len(G.app.saveHandlers))
         event = events3d.HumanEvent(self, 'save')
