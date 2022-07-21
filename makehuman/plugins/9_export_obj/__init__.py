@@ -36,6 +36,12 @@ Abstract
 TODO
 """
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
+
 from export import Exporter, ExportConfig
 
 class ObjConfig(ExportConfig):
@@ -62,6 +68,9 @@ class ExporterOBJ(Exporter):
         self.hiddenGeom = options.addWidget(gui.CheckBox("Helper geometry", False))
 
     def export(self, human, filename):
+        debug("new log")
+        debug(filename)
+
         from progress import Progress
         from . import mh2obj
 

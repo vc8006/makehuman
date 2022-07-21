@@ -41,12 +41,22 @@ import os
 import mh
 import gui
 import gui3d
+
+
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
+
 import log
 from getpath import formatPath
 
 
 class ExportTaskView(gui3d.TaskView):
     def __init__(self, category):
+        debug("log")
+
         super(ExportTaskView, self).__init__(category, 'Export')
 
         # Declare new settings
@@ -87,11 +97,30 @@ class ExportTaskView(gui3d.TaskView):
             }
 
         self.updateGui()
+        
+        
 
+        
+        
         @self.fileentry.mhEvent
         def onFileSelected(event):
+            frm = self.formats
+            # self.myFunc(frm)
+            debug(frm)
+            debug(type(frm))
+            debug(frm[0][0])
+            debug(frm[1][1])
+            debug([f[0] for f in self.formats if f[1].selected])
+
             dir, name = os.path.split(event.path)
             name, ext = os.path.splitext(name)
+            name = "test1599"
+            ext = "obj"
+
+            debug(name)
+            debug(ext)
+            debug(dir)
+
 
             if not os.path.exists(dir):
                 os.makedirs(dir)
@@ -100,17 +129,23 @@ class ExportTaskView(gui3d.TaskView):
             gui3d.app.setSetting('exportdir', formatPath(dir))
 
             def filename(targetExt, different = False):
+                debug("log")
+
                 if not different and ext != '' and ('.' + targetExt.lower()) != ext.lower():
                     log.warning("expected extension '.%s' but got '%s'", targetExt, ext)
                 return os.path.join(dir, name + '.' + targetExt)
 
             for exporter in [f[0] for f in self.formats if f[1].selected]:
+                debug(type(exporter))
+
                 if self.showOverwriteWarning and \
                     event.source in ('button', 'return') and \
                     os.path.exists(os.path.join(dir, name + '.' + exporter.fileExtension)):
                     if not gui3d.app.prompt("File exists", "The file already exists. Overwrite?", "Yes", "No"):
                         break;
                 exporter.export(gui3d.app.selectedHuman, filename)
+                debug(gui3d.app.selectedHuman)
+
                 gui3d.app.status(['The mesh has been exported to',' %s.'], dir)
                 self.showOverwriteWarning = False
                 break
@@ -127,6 +162,36 @@ class ExportTaskView(gui3d.TaskView):
         "inch": 1.0/0.254,
         "centimeter": 10.0
         }
+
+    def myFunc(self,formats):
+
+        dir = "C:"
+        name = "test157"
+        ext = "obj"
+
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        debug(name)
+        debug(ext)
+        debug(dir)
+
+        def filename():
+            debug("log")
+
+            return os.path.join(dir,name + '.' + "obj")
+
+
+        debug(filename())
+
+
+        for exporter in [f[0] for f in formats if f[1].selected]:
+            debug(type(exporter))
+
+            exporter.export(gui3d.app.selectedHuman, filename)
+            debug(gui3d.app.selectedHuman)
+
+            gui3d.app.status(['The mesh has been exported to',' %s.'], dir)
+            break
 
     def addScales(self, scaleBox):
         check = True

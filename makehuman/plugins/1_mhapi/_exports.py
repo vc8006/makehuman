@@ -9,6 +9,12 @@ import gui3d
 import gui
 import mh
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
+
 class Exports(NameSpace):
     """This namespace wraps all calls that are related to producing file output."""
 
@@ -21,6 +27,8 @@ class Exports(NameSpace):
         return self.api.ui.getTaskView("Files","Export")
 
     def getExportFormats(self):
+        debug("log")
+
         tv = self._getExportTaskView()
         return list(tv.formats)
 
@@ -55,6 +63,8 @@ class Exports(NameSpace):
         return self.getExporterByClassname("ExporterMHX2")
 
     def exportAsOBJ(self, outputFilename, useExportsDir=True):
+        debug("log")
+
         """Export the current toon as wavefront obj."""
         e = self.getOBJExporter()
         human = gui3d.app.selectedHuman

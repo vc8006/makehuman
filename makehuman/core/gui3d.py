@@ -337,7 +337,7 @@ class Category(View):
         return self.tasksByName.get(name)
 
 # The application
-app = None
+app = None 
 
 class Application(events3d.EventHandler):
     """

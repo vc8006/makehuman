@@ -40,6 +40,12 @@ import sys
 import os
 import re
 from core import G
+
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
 import log
 
 from PyQt5 import QtCore, QtGui, QtSvg, QtWidgets
@@ -1412,10 +1418,14 @@ class FileEntryView(QtWidgets.QWidget, Widget):
 
     def getMode(self):
         """Get the FileEntryView's mode of operation."""
+        debug("log")
+
         return self.browse.mode
 
     def setMode(self, mode):
         """Set the FileEntryView's mode of operation."""
+        debug("log")
+
         self.browse.mode = mode
 
     mode = property(getMode, setMode)

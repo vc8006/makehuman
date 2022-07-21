@@ -40,6 +40,12 @@ Supports exporting of selected skeleton and animations in BVH format.
 import bvh
 
 from export import Exporter, ExportConfig
+
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+
 import log
 from core import G
 
@@ -77,6 +83,8 @@ class ExporterBVH(Exporter):
         return cfg
 
     def export(self, human, filename):
+        debug(filename,type(human),"here at export in init.py",)
+
         if not human.getSkeleton():
             G.app.prompt('Error', 'You did not select a skeleton from the library.', 'OK')
             return
