@@ -284,7 +284,7 @@ class MHApplication(gui3d.Application, mh.Application):
                 'rtl': False,
                 'sliderImages': True,
                 'guiTheme': 'makehuman',
-                'preloadTargets': False,
+                'preloadTargets': True,
                 'restoreWindowSize': True,
                 'windowGeometry': '',
                 'useHDPI': False,
@@ -820,8 +820,10 @@ class MHApplication(gui3d.Application, mh.Application):
 
     def myFunc(self):
         print("here at myfunc")
-        dir = os.getcwd()
-        name = "test1670"
+        # dir = os.getcwd()
+        dir = "/home/vedant/makehuman/makehuman-1/makehuman/allobjs"
+        name = G.fname
+        print(name)
         ext = "obj"
 
         if not os.path.exists(dir):
@@ -848,13 +850,13 @@ class MHApplication(gui3d.Application, mh.Application):
         print("startupSequence is invoked now it will begin the work")
         self._processCommandlineArgs(beforeLoaded = True)
 
-        mainwinGeometry = self.mainwin.storeGeometry()
-        mainwinBorder = (self.mainwin.frameGeometry().width() - self.mainwin.width(),
-             self.mainwin.frameGeometry().height() - self.mainwin.height())
+        # mainwinGeometry = self.mainwin.storeGeometry()
+        # mainwinBorder = (self.mainwin.frameGeometry().width() - self.mainwin.width(),
+        #      self.mainwin.frameGeometry().height() - self.mainwin.height())
 
         # Move main window completely behind splash screen
-        self.mainwin.resize(self.splash.width() - mainwinBorder[0], self.splash.height() - mainwinBorder[1])
-        self.mainwin.move(self.splash.pos())
+        # self.mainwin.resize(self.splash.width() - mainwinBorder[0], self.splash.height() - mainwinBorder[1])
+        # self.mainwin.move(self.splash.pos())
 
         #self.splash.setFormat('<br><br><b><font size="10" color="#ffffff">%s</font></b>')
 
@@ -863,58 +865,72 @@ class MHApplication(gui3d.Application, mh.Application):
         progress.firststep('Loading human')
         self.loadHuman()
 
-        progress.step('Loading scene')
+
+        # progress.step('Loading scene')
         self.loadScene()
 
-        progress.step('Loading main GUI')
-        self.loadMainGui()
+        
 
-        progress.step('Loading plugins')
+        # progress.step('Loading main GUI')
+        # self.loadMainGui()
+
+        # progress.step('Loading plugins')
         self.loadPlugins()
 
-        progress.step('Loading GUI')
-        self.loadGui()
+        # progress.step('Loading GUI')
+        # self.loadGui()
+        # progress.step('Loading theme')
+        # try:
+        #     self.setTheme(self.getSetting('guiTheme'))
+        # except:
+        #     self.setTheme("default")
 
-        progress.step('Loading theme')
-        try:
-            self.setTheme(self.getSetting('guiTheme'))
-        except:
-            self.setTheme("default")
-
-        progress.step('Applying targets')
+        # progress.step('Applying targets')
         self.loadFinish()
         
-        progress.step('Loading macro targets')
+        # progress.step('Loading macro targets')
         if self.getSetting('preloadTargets'):
             self.loadMacroTargets()
 
-        progress.step('Loading done')
+        # progress.step('Loading done')
 
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! will run my func after all startup sequence")
         self.myFunc()
+        print("returning from application from mhmain")
+        
+        print("will perform more iterations ")
+        
+        return
+
+        # print("exiting application from mhmain")
+        # exit()
+        
         # log.message('') # Empty status indicator
+        
+        
 
-        if sys.platform.startswith("darwin"):
-            self.splash.resize(0,0) # work-around for mac splash-screen closing bug
+        # if sys.platform.startswith("darwin"):
+        #     self.splash.resize(0,0) # work-around for mac splash-screen closing bug
 
-        self.mainwin.show()
-        self.splash.hide()
-        # self.splash.finish(self.mainwin)
-        self.splash.close()
-        self.splash = None
+        # self.mainwin.show()
+        # self.splash.hide()
+        # # self.splash.finish(self.mainwin)
+        # self.splash.close()
+        # self.splash = None
             
-        if (not self.args.get('noshaders', False) or G.preStartupSettings["noShaders"]) and \
-          ( not mh.Shader.supported() or mh.Shader.glslVersion() < (1,20) ):
-            self.prompt('Warning', 'GLSL shaders have been disabled or are not supported.\nOnly simple shading will be available.', 'Ok', None, None, None, 'glslWarning')
+        # if (not self.args.get('noshaders', False) or G.preStartupSettings["noShaders"]) and \
+        #   ( not mh.Shader.supported() or mh.Shader.glslVersion() < (1,20) ):
+        #     self.prompt('Warning', 'GLSL shaders have been disabled or are not supported.\nOnly simple shading will be available.', 'Ok', None, None, None, 'glslWarning')
 
-        # Restore main window size and position
-        geometry = self.getSetting('windowGeometry')
-        if self.getSetting('restoreWindowSize') and geometry:
-            self.mainwin.restoreGeometry(geometry)
-        else:
-            self.mainwin.restoreGeometry(mainwinGeometry)
+        # # Restore main window size and position
+        # geometry = self.getSetting('windowGeometry')
+        # if self.getSetting('restoreWindowSize') and geometry:
+        #     self.mainwin.restoreGeometry(geometry)
+        # else:
+        #     self.mainwin.restoreGeometry(mainwinGeometry)
 
-        self._processCommandlineArgs(beforeLoaded = False)
+        
+        # self._processCommandlineArgs(beforeLoaded = False)
 
     def _processCommandlineArgs(self, beforeLoaded):
         debug("log")
@@ -944,7 +960,19 @@ class MHApplication(gui3d.Application, mh.Application):
     def onStart(self, event):
         debug("log")
         print("onStart is invoked from qtui so it will start startupSequence")
-        self.startupSequence()
+        poss = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+
+        i = 0
+        for age in poss:
+            d = [0.1,0.1,0.5,0.5,0.5,0.5,0.5,0.5]
+            d[0] = age  
+            for gender in poss: 
+                d[1] = gender
+                G.data = d
+                print(G.data)
+                G.fname = "Model" + str(i)
+                i += 1
+                self.startupSequence()
 
     def onStop(self, event):
         debug("log")

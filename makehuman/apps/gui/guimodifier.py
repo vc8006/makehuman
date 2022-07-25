@@ -248,7 +248,7 @@ def loadModifierTaskViews(filename, human, category, taskviewClass=None):
     print("from data/modifiers/modeling_sliders.json file we are getting values at guimodiifier.py")
     for taskName, taskViewProps in data.items():
 
-        print('printing tasksName from guimodifier.py /////////////\\\\\\\\\ ',taskName)
+        # print('printing tasksName from guimodifier.py /////////////\\\\\\\\\ ',taskName)
 
         sName = taskViewProps.get('saveName', None)
         label = taskViewProps.get('label', None)
@@ -259,7 +259,7 @@ def loadModifierTaskViews(filename, human, category, taskviewClass=None):
 
         # Create sliders
         for sliderCategory, sliderDefs in taskViewProps['modifiers'].items():
-            print("printing sliderCatory --------> ",sliderCategory)
+            # print("printing sliderCatory --------> ",sliderCategory)
             for sDef in sliderDefs:
                 modifierName = sDef['mod']
                 modifier = human.getModifier(modifierName)

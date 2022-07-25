@@ -1389,15 +1389,18 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         # TODO emit event?
 
     def setDefaultValues(self):
+        data = G.data
+        print(data,"printing data here at setdefault")
         debug("log")
-        self.age = 0.1
-        self.gender = 0.1
-        self.weight = 0.1
-        self.muscle = 0.5
-        self.height = 0.5
-        self.breastSize = 0.5
-        self.breastFirmness = 0.5
-        self.bodyProportions = 0.5
+        self.age = data[0]
+        self.gender = data[1]
+        self.weight = data[2]
+        self.muscle = data[3]
+        self.height = data[4]
+        self.breastSize = data[5]
+        self.breastFirmness = data[6]
+        self.bodyProportions = data[7]
+
 
         self._setGenderVals()
         self._setAgeVals()

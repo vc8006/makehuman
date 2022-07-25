@@ -56,6 +56,8 @@ class Globals(object):
         self.clearColor = (0.0, 0.0, 0.0, 0.0)
         self.preStartupSettings = dict()
         self._preStartupConfigScan()
+        self.data = []
+        self.fname = "test3"
 
     def _preStartupConfigScan(self):
         """Run a very primitive scan in order to pick up settings which has

@@ -583,9 +583,6 @@ LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(messag
 basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT,filemode='w')
 
 
-
-
-
 def main():
     # print(getCopyrightMessage(short=True) + "\n")
 
@@ -624,12 +621,19 @@ def main():
     # Here pyQt and PyOpenGL will be imported
     from mhmain import MHApplication
     print("makehuman file started application >>>>>>>>>>>>>>>>>>>>")
+
+    
     application = MHApplication()
+    print("this is before run")
     application.run()
+
+    print("this is after run")
+
+    close_standard_streams()
+
 
     #import cProfile
     #cProfile.run('application.run()')
-    close_standard_streams()
     print("makehuman file ended application >>>>>>>>>>>>>>>>>>>>")
 
 if __name__ == '__main__':
