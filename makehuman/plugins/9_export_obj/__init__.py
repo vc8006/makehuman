@@ -87,10 +87,14 @@ class ExporterOBJ(Exporter):
         cfg.scale,cfg.unit    = self.taskview.getScale()
         cfg.hiddenGeom        = self.hiddenGeom.selected
 
+        print(cfg.useNormals,cfg.feetOnGround,"pppppppppppppp",cfg.scale,"uuuuuuuuuuuu",cfg.unit,"iiiiiiiiiiiiii",cfg.hiddenGeom)
+
         return cfg
 
 def load(app):
+    print("here at init.py in load function")
     app.addExporter(ExporterOBJ())
+    print(app)
 
 def unload(app):
     pass

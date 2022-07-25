@@ -583,6 +583,9 @@ LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(messag
 basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT,filemode='w')
 
 
+
+
+
 def main():
     # print(getCopyrightMessage(short=True) + "\n")
 
@@ -626,7 +629,6 @@ def main():
 
     #import cProfile
     #cProfile.run('application.run()')
-
     close_standard_streams()
     print("makehuman file ended application >>>>>>>>>>>>>>>>>>>>")
 

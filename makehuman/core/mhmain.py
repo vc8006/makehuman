@@ -818,6 +818,31 @@ class MHApplication(gui3d.Application, mh.Application):
 
         self.redraw()
 
+    def myFunc(self):
+        print("here at myfunc")
+        dir = os.getcwd()
+        name = "test1670"
+        ext = "obj"
+
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        print(name,dir,ext)
+
+        def filename():
+            return os.path.join(dir,name + '.' + "obj")
+
+
+        # debug(filename())
+        print(filename())
+        print("printing current human from global app -> ",gui3d.app.selectedHuman)
+        from myfile import ExporterOBJ
+        export_obj = ExporterOBJ()
+        print(type(export_obj),"printing export obj from myfile")
+        print(export_obj)
+        export_obj.export(gui3d.app.selectedHuman, filename())
+
+
+
     def startupSequence(self):
         debug("log")
         print("startupSequence is invoked now it will begin the work")
@@ -865,6 +890,8 @@ class MHApplication(gui3d.Application, mh.Application):
 
         progress.step('Loading done')
 
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! will run my func after all startup sequence")
+        self.myFunc()
         # log.message('') # Empty status indicator
 
         if sys.platform.startswith("darwin"):
@@ -1979,3 +2006,4 @@ class MHApplication(gui3d.Application, mh.Application):
     def addExporter(self, exporter):
         debug("log")
         self.getCategory('Files').getTaskByName('Export').addExporter(exporter)
+ 

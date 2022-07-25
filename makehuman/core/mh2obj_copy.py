@@ -36,29 +36,15 @@ Exports proxy mesh to obj
 
 """
 
+
 import wavefront
 import os
-from progress import Progress
 import numpy as np
 
-from logging import *
-LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
-# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
-basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
-
-
-#
-#    exportObj(human, filepath, config):
-#
-
 def exportObj(filepath, config=None):
-    debug("log")
-
     print("here at mh2obj_copy")
     print("printing filepath",filepath)
-    print(config,"configggggggggg")
 
-    progress = Progress(0, None)
     human = config.human
     config.setupTexFolder(filepath)
     filename = os.path.basename(filepath)
@@ -66,13 +52,10 @@ def exportObj(filepath, config=None):
 
     print(name,"nameeeeeeeeeeee")
 
-
-    progress(0, 0.3, "Collecting Objects")
     objects = human.getObjects(excludeZeroFaceObjs=not config.hiddenGeom)
     meshes = [o.mesh for o in objects]
 
     print(meshes,"meshessssssssss")
-
 
     if config.hiddenGeom:
         # Disable the face masking on copies of the input meshes
@@ -87,7 +70,6 @@ def exportObj(filepath, config=None):
             m.calcNormals()
             m.updateIndexBuffer()
 
-    progress(0.3, 0.99, "Writing Objects")
+    print("will call from wavefront")
     wavefront.writeObjFile(filepath, meshes, True, config, filterMaskedFaces=not config.hiddenGeom)
 
-    progress(1.0, None, "OBJ Export finished. Output file: %s" % filepath)

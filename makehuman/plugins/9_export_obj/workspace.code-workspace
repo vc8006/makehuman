@@ -1,0 +1,49 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../mechweb"
+		},
+		{
+			"path": "../../../../../mechanicalwebnew"
+		},
+		{
+			"name": "iitg_mechanical_website",
+			"path": "../../../../../mechwebfinal30-06-22/iitg_mechanical_website"
+		},
+		{
+			"name": "makehuman-1",
+			"path": "../../.."
+		},
+		{
+			"name": "acmfms-conference",
+			"path": "../../../../../acmfms/acmfms-conference"
+		},
+		{
+			"path": "../../../../../kinter"
+		},
+		{
+			"name": "Placement_Portal_2022",
+			"path": "../../../../../placement_portal_22/Placement_Portal_2022"
+		},
+		{
+			"path": "../../../../../rest_api_express"
+		},
+		{
+			"path": "../../../../../iitg_mech_workshop/central-workshop-iitg"
+		},
+		{
+			"name": "Placement_Portal_2022",
+			"path": "../../../../../Placement_Portal_2022"
+		},
+		{
+			"name": "awsmcs",
+			"path": "../../../../../awsmcs"
+		},
+		{
+			"path": "../../../../../flet_mcs"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "central-workshop-iitg"
+	}
+}

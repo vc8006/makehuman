@@ -98,24 +98,29 @@ class ExportTaskView(gui3d.TaskView):
 
         self.updateGui()
         
+        # print("running init in guiexport lets run my func")
+        # self.myFunc()
         
 
-        
         
         @self.fileentry.mhEvent
         def onFileSelected(event):
-            frm = self.formats
-            # self.myFunc(frm)
-            debug(frm)
-            debug(type(frm))
-            debug(frm[0][0])
-            debug(frm[1][1])
-            debug([f[0] for f in self.formats if f[1].selected])
+            # frm = self.formats
+            # # self.myFunc(frm)
+            # debug(frm)
+            # debug(type(frm))
+            # debug(frm[0][0])
+            # debug(frm[1][1])
+            # debug(frm[1].selected)
+            # debug([f[0] for f in self.formats if f[1].selected])
 
             dir, name = os.path.split(event.path)
             name, ext = os.path.splitext(name)
-            name = "test1599"
+            name = "test15"
             ext = "obj"
+
+            print("here at guiexport")
+            print(dir)
 
             debug(name)
             debug(ext)
@@ -135,14 +140,19 @@ class ExportTaskView(gui3d.TaskView):
                     log.warning("expected extension '.%s' but got '%s'", targetExt, ext)
                 return os.path.join(dir, name + '.' + targetExt)
 
+            print([f[0] for f in self.formats if f[1].selected],"@@@@@@")
+            print(self.formats)
             for exporter in [f[0] for f in self.formats if f[1].selected]:
                 debug(type(exporter))
+                print(exporter)
+                print([f[0] for f in self.formats if f[1].selected])
+
 
                 if self.showOverwriteWarning and \
                     event.source in ('button', 'return') and \
                     os.path.exists(os.path.join(dir, name + '.' + exporter.fileExtension)):
                     if not gui3d.app.prompt("File exists", "The file already exists. Overwrite?", "Yes", "No"):
-                        break;
+                        break
                 exporter.export(gui3d.app.selectedHuman, filename)
                 debug(gui3d.app.selectedHuman)
 
@@ -163,17 +173,18 @@ class ExportTaskView(gui3d.TaskView):
         "centimeter": 10.0
         }
 
-    def myFunc(self,formats):
+    def myFunc(self):
 
-        dir = "C:"
-        name = "test157"
+        dir = os.getcwd()
+        name = "test167"
         ext = "obj"
 
         if not os.path.exists(dir):
             os.makedirs(dir)
-        debug(name)
-        debug(ext)
-        debug(dir)
+        # debug(name)
+        # debug(ext)
+        # debug(dir)
+        print(name,dir,ext)
 
         def filename():
             debug("log")
@@ -181,17 +192,15 @@ class ExportTaskView(gui3d.TaskView):
             return os.path.join(dir,name + '.' + "obj")
 
 
-        debug(filename())
+        # debug(filename())
+        print(filename())
+        print("printing current human from global app -> ",gui3d.app.selectedHuman)
+        from makehuman.core.myfile import ExporterOBJ
+        export_obj = ExporterOBJ()
+        print(type(export_obj),"printing export obj from myfile")
+        print(export_obj)
+        export_obj.export(gui3d.app.selectedHuman, filename())
 
-
-        for exporter in [f[0] for f in formats if f[1].selected]:
-            debug(type(exporter))
-
-            exporter.export(gui3d.app.selectedHuman, filename)
-            debug(gui3d.app.selectedHuman)
-
-            gui3d.app.status(['The mesh has been exported to',' %s.'], dir)
-            break
 
     def addScales(self, scaleBox):
         check = True

@@ -1392,7 +1392,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         debug("log")
         self.age = 0.1
         self.gender = 0.1
-        self.weight = 0.5
+        self.weight = 0.1
         self.muscle = 0.5
         self.height = 0.5
         self.breastSize = 0.5
@@ -1411,6 +1411,7 @@ class Human(guicommon.Object, animation.AnimatedMesh):
         self.caucasianVal = 1.0/3
         self.asianVal = 1.0/3
         self.africanVal = 1.0/3
+
 
     def resetMeshValues(self):
         debug("log")

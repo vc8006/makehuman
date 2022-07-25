@@ -79,6 +79,7 @@ class Exporter(object):
 class ExportConfig(object):
 
     def __init__(self):
+        print("here at export config in export.py")
         self.feetOnGround       = False
         self.scale              = 1.0
         self.unit               = "dm"
