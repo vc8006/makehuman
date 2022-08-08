@@ -43,6 +43,12 @@ import gui
 import log
 import numpy as np
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
+
 
 #
 #   Clothes
@@ -183,6 +189,8 @@ class ClothesTaskView(proxychooser.ProxyChooserTaskView):
         file.write('clothesHideFaces %s\n' % str(self.faceHidingTggl.selected))
 
     def registerLoadSaveHandlers(self):
+        debug("$# here at 3_libraries_clothes_chooser.py at registloadsavehandlers")
+
         super(ClothesTaskView, self).registerLoadSaveHandlers()
         gui3d.app.addLoadHandler('clothesHideFaces', self.loadHandler)
 

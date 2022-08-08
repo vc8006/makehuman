@@ -14,6 +14,12 @@ import gui3d
 
 from core import G
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
+
 class Assets(NameSpace):
     """This namespace wraps all calls that are related to reading and managing assets."""
 
@@ -615,6 +621,7 @@ class Assets(NameSpace):
         return self._getEquippedProxies("Geometries", "Eyelashes", onlyFirst=True)
 
     def equipClothes(self, mhclofile):
+        debug("$# here at equipclothes in assets.py")
         """Equip a MHCLO file with clothes"""
         self._equipProxy("Geometries", "Clothes", mhclofile)
 

@@ -23,6 +23,12 @@ pp = pprint.PrettyPrinter(indent=4)
 DEFAULT_TABLE_HEIGHT=250
 DEFAULT_LABEL_COLUMN_WIDTH=300
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
+
 class MassProduceTaskView(gui3d.TaskView):
 
     def __init__(self, category):
@@ -66,6 +72,7 @@ class MassProduceTaskView(gui3d.TaskView):
         self.addTopWidget(self.mainScroll)
 
     def _setupRightPanel(self, r):
+        debug("$# here at produce panel")
         self.addRightWidget(self._createExportSettings(r))
         self.addRightWidget(mhapi.ui.createLabel())
         self.addRightWidget(self._createProducePanel(r))
@@ -223,6 +230,8 @@ class MassProduceTaskView(gui3d.TaskView):
             allNames.append(name)
 
         allNames.sort()
+
+        debug("$# here after all names are sorted")
 
         # part = ["Full","Upper","Lower","Shoes"]
         # gender = ["male","female"]
@@ -738,6 +747,7 @@ class MassProduceTaskView(gui3d.TaskView):
         return self.exportPanel
 
     def _createProducePanel(self, r):
+        debug("$# here at produce panel")
         self.producePanel = mhapi.ui.createGroupBox("Produce")
 
         self.producePanel.addWidget(mhapi.ui.createLabel("Number of characters"))
@@ -814,8 +824,9 @@ class MassProduceTaskView(gui3d.TaskView):
         #print("Produce")
 
         #self.randomizationSettings.dumpValues()
-
+        debug("$# here at _onProduceClick in massproduce.py ")
         self.initialState = HumanState()
+        log.warning("$# here at onproduce link in massprocude .py %s",self.initialState)
 
         i = int(self.randomizationSettings.getValue("output","numfiles"))
         base = self.randomizationSettings.getValue("output","fnbase")

@@ -56,6 +56,12 @@ import json
 SimpleProxyTypes = ['Hair', 'Eyes', 'Eyebrows', 'Eyelashes', 'Teeth', 'Tongue']
 ProxyTypes = ['Proxymeshes', 'Clothes'] + SimpleProxyTypes
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
+
 SimpleProxyTypesLower = []
 for name in SimpleProxyTypes:
     SimpleProxyTypesLower.append(name.lower())
@@ -66,6 +72,7 @@ Unit3 = np.identity(3,float)
 
 class Proxy:
     def __init__(self, file, type, human):
+        debug("$# here at proxy ")
         log.debug("Loading proxy file: %s.", file)
         import makehuman
 
@@ -337,7 +344,10 @@ doWeights = 2
 doDeleteVerts = 3
 
 def loadProxy(human, path, type="Clothes"):
+    log.message("$# printing path/mhclofile in loadproxy in proxy.py %s",path)
     try:
+        debug("$# in try block 1 of proxy.py")
+
         npzpath = os.path.splitext(path)[0] + '.mhpxy'
         asciipath = os.path.splitext(path)[0] + getAsciiFileExtension(type)
         try:
@@ -347,6 +357,8 @@ def loadProxy(human, path, type="Clothes"):
             if os.path.isfile(asciipath) and os.path.getmtime(asciipath) > os.path.getmtime(npzpath):
                 log.message('compiled proxy file out of date: %s', npzpath)
                 raise RuntimeError('compiled file out of date: %s', npzpath)
+            debug("$# in try block 2 of proxy.py")
+
             proxy = loadBinaryProxy(npzpath, human, type)
         except Exception as e:
             showTrace = not isinstance(e, RuntimeError)
@@ -356,6 +368,7 @@ def loadProxy(human, path, type="Clothes"):
                 # Only write compiled binary proxies to user data path
                 try:
                     log.message('Compiling binary proxy file %s', npzpath)
+                    debug("$# in compiling binary proxy file and will call saviBinaryProxy of proxy.py")
                     saveBinaryProxy(proxy, npzpath)
                 except Exception:
                     log.notice('unable to save compiled proxy: %s', npzpath, exc_info=True)
@@ -366,6 +379,8 @@ def loadProxy(human, path, type="Clothes"):
                         except Exception as e:
                             log.warning("Could not remove empty file %s that was left behind (%s).", npzpath, e)
             else:
+                debug("$# not compiled of proxy.py")
+                
                 log.debug('Not writing compiled proxies to system paths (%s).', npzpath)
     except:
         log.error('Unable to load proxy file: %s', path, exc_info=True)
@@ -374,12 +389,13 @@ def loadProxy(human, path, type="Clothes"):
     return proxy
 
 def loadTextProxy(human, filepath, type="Clothes"):
+    debug("$# here at loadTextProxy")
     try:
         fp = open(filepath, "r", encoding="utf-8", errors='ignore')
     except IOError:
         log.error("*** Cannot open %s", filepath)
         return None
-
+    debug("$# %s here at loadtextproxy ",filepath)
     folder = os.path.realpath(os.path.expanduser(os.path.dirname(filepath)))
     proxy = Proxy(filepath, type, human)
     proxy.max_pole = 8
@@ -500,6 +516,7 @@ def loadTextProxy(human, filepath, type="Clothes"):
 
 
         elif status == doRefVerts:
+            debug(" $& here at proxy.py now status is dorefverts and now will read all vertexes ")
             refVert = ProxyRefVert(human)
             refVerts.append(refVert)
             if len(words) == 1:

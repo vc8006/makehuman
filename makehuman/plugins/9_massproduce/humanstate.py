@@ -19,6 +19,12 @@ from PyQt5.QtWidgets import *
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
+
 class HumanState():
 
     def __init__(self, settings = None):
@@ -334,11 +340,13 @@ class HumanState():
             self._randomizeShoes()
 
     def equipClothes(self):
+        debug("$# here at equipclothes in humanstate.py")
         mhapi.assets.unequipAllClothes()
         for c in self.clothes:
             mhapi.assets.equipClothes(c)
 
     def applyState(self, assumeBodyReset=False):
+        debug("$# here at applystate in humanstate.py")
 
         self._applyMacroModifiers()
         if assumeBodyReset:

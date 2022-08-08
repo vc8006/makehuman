@@ -48,6 +48,11 @@ import log
 import getpath
 import filecache
 
+from logging import *
+LOG_FORMAT = "[%(asctime)s] [%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
+# LOG_FORMAT = '%m-%d %H:%M:%S','[%(asctime)s] {%(pathname)s:%(lineno)d} %(funcName)s - %(message)s'
+basicConfig(filename="allLogs.log",level = DEBUG,format=LOG_FORMAT)
+import log
 
 class ProxyAction(gui3d.Action):
     def __init__(self, name, library, before, after):
@@ -57,6 +62,8 @@ class ProxyAction(gui3d.Action):
         self.after = after
 
     def do(self):
+        debug("$# here at ProxyAction at do function in proxychooser.py")
+
         self.library.selectProxy(self.after)
         return True
 
@@ -74,6 +81,7 @@ class MultiProxyAction(gui3d.Action):
 
     def do(self):
         if self.add:
+            debug("$# here at multiproxyAction at do function in proxychooser.py")
             self.library.selectProxy(self.mhclo)
         else:
             self.library.deselectProxy(self.mhclo)
@@ -219,11 +227,15 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
         return os.path.join(self.sysProxyDir, 'clear.thumb')
 
     def proxyFileSelected(self, filename):
+        log.message('$# here at proxychooser in proxyfileselected filename = ', filename)
+
         """
         Called when user selects a file from the filechooser widget.
         Creates an action that invokes selectProxy().
         """
         if self.multiProxy:
+            debug("$# here at proxyfileselected in proxychooser.py for multiaction proxy")
+
             action = MultiProxyAction("Change %s" % self.proxyName,
                                       self,
                                       filename,
@@ -233,6 +245,7 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
                 oldFile = self.getSelection()[0].file
             else:
                 oldFile = None
+            debug("$# here at proxyfileselected in proxychooser.py not action will work for proxyAction")
             action = ProxyAction("Change %s" % self.proxyName,
                                  self,
                                  oldFile,
@@ -248,7 +261,7 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
         """
         if not self.multiProxy:
             return
-
+        debug("$# here at proxyfiledeselected")
         action = MultiProxyAction("Change %s" % self.proxyName,
                                   self,
                                   filename,
@@ -277,6 +290,8 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
         raise NotImplementedError("Implement ProxyChooserTaskView.proxyDeselected()!")
 
     def selectProxy(self, mhclofile):
+        log.warning("$# %s",mhclofile)
+        debug("$# here at select proxy at proxychooser.py")
         """
         Called when a new proxy has been selected.
         If this library selects only a single proxy, specifying None as
@@ -528,6 +543,7 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
             self.adaptProxyToHuman(pxy, obj, updateSubdivided, fit_to_posed)
 
     def loadHandler(self, human, values, strict):
+        debug("$# here at loadHandler in proxychooser.py")
         if values[0] == 'status':
             return
 
@@ -648,6 +664,7 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
             return self.getAllTags()
 
     def registerLoadSaveHandlers(self):
+        debug("$# here at registerLoadSavehandlers in proxychooser.py")
         gui3d.app.addLoadHandler(self.getSaveName(), self.loadHandler)
         priority = 2    # Make sure proxy choosers come before material library
         gui3d.app.addSaveHandler(self.saveHandler, priority)
