@@ -101,6 +101,8 @@ class MassProduceTaskView(gui3d.TaskView):
         allClothes.extend(sysClothes)
         allClothes.extend(userClothes)
         
+        print("all Clothes",allClothes)
+
         femaleFullExplicit = ["female elegantsuit01",
         "female casualsuit02",
         "female casualsuit01",
@@ -143,6 +145,8 @@ class MassProduceTaskView(gui3d.TaskView):
             bn = bn.strip()
 
             name = bn
+
+            print("cloth name",name)
 
             clothesInfo = dict()
             clothesInfo["fullPath"] = fullPath
@@ -811,7 +815,7 @@ class MassProduceTaskView(gui3d.TaskView):
         return self.macroPanel
 
     def _onProduceClick(self):
-        #print("Produce")
+        print("onProduceClick in massproduce.py in plugins")
 
         #self.randomizationSettings.dumpValues()
 
@@ -853,7 +857,9 @@ class MassProduceTaskView(gui3d.TaskView):
             prog(prg, desc="Evaluating")
 
             i = i - 1
+            print("will apply changes from massproduce.py")
             self.initialState.applyState(True)
+            print("changes applied from massproduce.py")
             self.human.applyAllTargets()
 
         self.msg = QMessageBox()

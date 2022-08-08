@@ -55,8 +55,10 @@ class ProxyAction(gui3d.Action):
         self.library = library
         self.before = before
         self.after = after
+        print("here at proxychooser.py at proxyaction init name,before,afte ",name,before,after)
 
     def do(self):
+        print("called do funtion from proxyaction at proxychooser.py")
         self.library.selectProxy(self.after)
         return True
 
@@ -233,10 +235,12 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
                 oldFile = self.getSelection()[0].file
             else:
                 oldFile = None
+            print("here at proxychooser.py filename: ",filename,type(filename))
             action = ProxyAction("Change %s" % self.proxyName,
                                  self,
                                  oldFile,
                                  filename)
+            print("here at proxychooser.py action = ",action)
         gui3d.app.do(action)
 
     def proxyFileDeselected(self, filename):
@@ -277,6 +281,7 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
         raise NotImplementedError("Implement ProxyChooserTaskView.proxyDeselected()!")
 
     def selectProxy(self, mhclofile):
+        print("here at selectproxy in proxychooser.py mhclofile : ",mhclofile)
         """
         Called when a new proxy has been selected.
         If this library selects only a single proxy, specifying None as
@@ -296,6 +301,7 @@ class ProxyChooserTaskView(gui3d.TaskView, filecache.MetadataCacher):
         human = self.human
 
         pxy = proxy.loadProxy(human, mhclofile, type=self.getProxyType())
+        print("pxy proxy from proxychooser.py ",pxy)
 
         if pxy.uuid in [p.uuid for p in self.getSelection() if p is not None]:
             log.debug("Proxy with UUID %s (%s) already loaded in %s library. Skipping.", pxy.uuid, pxy.file, self.proxyName)

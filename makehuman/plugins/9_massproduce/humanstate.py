@@ -334,6 +334,7 @@ class HumanState():
             self._randomizeShoes()
 
     def equipClothes(self):
+        print("equip cloth in humanstate.py")
         mhapi.assets.unequipAllClothes()
         for c in self.clothes:
             mhapi.assets.equipClothes(c)

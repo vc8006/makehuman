@@ -549,7 +549,9 @@ class Assets(NameSpace):
         return self._findProxies(path)
 
     def _equipProxy(self, category, tab, filename):
+        print("here at _assets.py to equip")
         tv = self.api.ui.getTaskView(category, tab)
+        print(tv,type(tv))
         if tv is None:
             raise ValueError("Could not find taskview " + str(category) + "/" + str(tab))
         tv.proxyFileSelected(filename)
@@ -615,6 +617,7 @@ class Assets(NameSpace):
         return self._getEquippedProxies("Geometries", "Eyelashes", onlyFirst=True)
 
     def equipClothes(self, mhclofile):
+        print("clothessssssssssssssss")
         """Equip a MHCLO file with clothes"""
         self._equipProxy("Geometries", "Clothes", mhclofile)
 

@@ -338,6 +338,7 @@ doDeleteVerts = 3
 
 def loadProxy(human, path, type="Clothes"):
     try:
+        print("here at loadproxy at proxy.py path ",path)
         npzpath = os.path.splitext(path)[0] + '.mhpxy'
         asciipath = os.path.splitext(path)[0] + getAsciiFileExtension(type)
         try:
@@ -347,15 +348,22 @@ def loadProxy(human, path, type="Clothes"):
             if os.path.isfile(asciipath) and os.path.getmtime(asciipath) > os.path.getmtime(npzpath):
                 log.message('compiled proxy file out of date: %s', npzpath)
                 raise RuntimeError('compiled file out of date: %s', npzpath)
+            print("here at second try block in proxy.py")
             proxy = loadBinaryProxy(npzpath, human, type)
+            print("here at proxy.py after loadbinaryproxy call proxy = ",proxy)
         except Exception as e:
             showTrace = not isinstance(e, RuntimeError)
             log.warning("Problem loading binary proxy: %s", e, exc_info=showTrace)
             proxy = loadTextProxy(human, asciipath, type)    # TODO perhaps proxy type should be stored in .mhclo file too
+            #!!!!!!!!!!!!!!!!!
+            print("printing proxy from proxy.py",proxy)
+            
             if getpath.isSubPath(npzpath, getpath.getPath()):
                 # Only write compiled binary proxies to user data path
+                print("here if getpath.isSubpath")
                 try:
                     log.message('Compiling binary proxy file %s', npzpath)
+                    print("here at exception in proxy.py now savebinaryproxy will run")
                     saveBinaryProxy(proxy, npzpath)
                 except Exception:
                     log.notice('unable to save compiled proxy: %s', npzpath, exc_info=True)
@@ -366,8 +374,10 @@ def loadProxy(human, path, type="Clothes"):
                         except Exception as e:
                             log.warning("Could not remove empty file %s that was left behind (%s).", npzpath, e)
             else:
+                print("here at not writing compilex proxies to system paths")
                 log.debug('Not writing compiled proxies to system paths (%s).', npzpath)
     except:
+        print("unable to load proxy file")
         log.error('Unable to load proxy file: %s', path, exc_info=True)
         return None
 

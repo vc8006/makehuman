@@ -585,7 +585,7 @@ def main():
         os.environ['MH_SHORT_VERSION'] = getShortVersion()
         os.environ['MH_MESH_VERSION'] = getBasemeshVersion()
         args = parse_arguments()
-        init_logging()
+        # init_logging()
     except Exception as e:
         print("error: " + format(str(e)), file=sys.stderr)
         import traceback
